@@ -127,10 +127,24 @@ const IELTSListeningPractice: React.FC = () => {
         if (savedVoice) setSelectedVoice(savedVoice);
       }
     };
+    
+    // Initial load
     loadVoices();
+    
+    // Set up voice changed listener
     window.speechSynthesis.onvoiceschanged = loadVoices;
-    const timeoutId = setTimeout(loadVoices, 100);
-    return () => { window.speechSynthesis.onvoiceschanged = null; clearTimeout(timeoutId); };
+    
+    // Multiple fallback attempts for mobile browsers
+    const timeoutId1 = setTimeout(loadVoices, 100);
+    const timeoutId2 = setTimeout(loadVoices, 500);
+    const timeoutId3 = setTimeout(loadVoices, 1000);
+    
+    return () => { 
+      window.speechSynthesis.onvoiceschanged = null; 
+      clearTimeout(timeoutId1);
+      clearTimeout(timeoutId2);
+      clearTimeout(timeoutId3);
+    };
   }, []);
 
   useEffect(() => { if (selectedVoice) localStorage.setItem('selected_uk_voice', selectedVoice.name); }, [selectedVoice]);
@@ -147,23 +161,46 @@ const IELTSListeningPractice: React.FC = () => {
   const speak = (text: string, interrupt = true) => {
     if ('speechSynthesis' in window) {
       try {
-        if (interrupt) window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        if (selectedVoice) utterance.voice = selectedVoice;
-        utterance.rate = playbackSpeed;
-        utterance. pitch = 1;
-        utterance.volume = 1;
-        window.speechSynthesis.speak(utterance);
+        if (interrupt) {
+          window.speechSynthesis.cancel();
+          // Add small delay for mobile browsers to process cancel
+          setTimeout(() => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            if (selectedVoice) utterance.voice = selectedVoice;
+            utterance.rate = playbackSpeed;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            window.speechSynthesis.speak(utterance);
+          }, 50);
+        } else {
+          const utterance = new SpeechSynthesisUtterance(text);
+          if (selectedVoice) utterance.voice = selectedVoice;
+          utterance.rate = playbackSpeed;
+          utterance.pitch = 1;
+          utterance.volume = 1;
+          window.speechSynthesis.speak(utterance);
+        }
       } catch (error) { console.warn('Speech synthesis error:', error); }
     }
   };
 
   const togglePause = () => {
     if (! ('speechSynthesis' in window)) return;
-    if (window.speechSynthesis.speaking) {
-      if (! isPaused) { window.speechSynthesis.pause(); setIsPaused(true); }
-      else { window.speechSynthesis.resume(); setIsPaused(false); }
-    } else { speak(words[currentIndex]); setIsPaused(false); }
+    if (window.speechSynthesis.speaking || isPaused) {
+      // Mobile Safari doesn't support pause/resume reliably
+      // So we cancel instead and track the paused state
+      window.speechSynthesis.cancel();
+      if (!isPaused) {
+        setIsPaused(true);
+      } else {
+        setIsPaused(false);
+        // Re-speak the current word when resuming
+        setTimeout(() => speak(words[currentIndex]), 100);
+      }
+    } else { 
+      speak(words[currentIndex]); 
+      setIsPaused(false); 
+    }
   };
 
   const handleSpeedChange = (speed: number) => { setPlaybackSpeed(speed); setShowSpeedMenu(false); speak("Speed changed"); };
@@ -171,11 +208,14 @@ const IELTSListeningPractice: React.FC = () => {
     setSelectedVoice(voice);
     setShowVoiceMenu(false);
     try {
-      const utterance = new SpeechSynthesisUtterance("Voice changed");
-      utterance.voice = voice;
-      utterance. rate = playbackSpeed;
       window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
+      // Add delay for mobile browsers
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance("Voice changed");
+        utterance.voice = voice;
+        utterance.rate = playbackSpeed;
+        window.speechSynthesis.speak(utterance);
+      }, 100);
     } catch (error) { console.warn('Voice test error:', error); }
   };
 
