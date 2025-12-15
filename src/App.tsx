@@ -1,3 +1,6 @@
+Here's the **complete updated App.tsx** with mobile voice support:
+
+```typescript
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen, Trophy, RotateCcw, Home, Gauge, X, ChevronDown, TrendingUp, Target, Award } from 'lucide-react';
 import './App.css';
@@ -34,7 +37,7 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
   
-  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
+  "Homes": ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
   
   "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
   
@@ -42,7 +45,7 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Rating and Qualities": ["Cheap", "Colored", "Dangerous", "Disappointed", "Efficient", "Expensive", "Luxurious", "Poor Quality", "Reasonable", "Safe", "Satisfactory", "Satisfied", "Spotted", "Striped", "Strongly Recommended"],
   
-  "Touring":  ["Aquarium", "Culture", "Guest", "Hostel", "Memorable", "Picnic", "Reservation", "Single Double-Bedded Room", "Souvenir", "Suite", "Ticket Office", "Tourist Attraction", "Tourist Guided Tour", "Trip", "View"],
+  "Touring": ["Aquarium", "Culture", "Guest", "Hostel", "Memorable", "Picnic", "Reservation", "Single Double-Bedded Room", "Souvenir", "Suite", "Ticket Office", "Tourist Attraction", "Tourist Guided Tour", "Trip", "View"],
   
   "Verbs": ["Arrange", "Borrow", "Collect", "Concentrate", "Develop", "Discuss", "Donate", "Edit", "Exhibit", "Hunt", "Immigrate", "Learn", "Mark", "Persuade", "Register", "Review", "Revise", "Suggest", "Supervise", "Support", "Surpass", "Touch", "Train"],
   
@@ -72,7 +75,7 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Works And Jobs": ["Accountant", "Architect", "Captain", "Cashier", "Clerk", "Craftsman", "Curriculum Vitae", "Decorator", "Designer", "Engineer", "Flight Attendant", "Freelance", "Guard", "Lecturer", "Mail Address", "Manager", "Occupation", "Office Assistant", "Pilot", "Profession", "Professor", "Psychologist", "Receptionist", "Secretary", "Specialist", "Teacher", "Vacancy", "Volunteer", "Waiter", "Waitress", "Work Experience"],
   
-  "Color": ["Black", "Blue", "Brown", "Green", "Grey", "Orange", "Pink", "Purple", "Red", "White", "Yellow"],
+  "Color":  ["Black", "Blue", "Brown", "Green", "Grey", "Orange", "Pink", "Purple", "Red", "White", "Yellow"],
   
   "Expressions and Time": ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
   
@@ -107,6 +110,7 @@ const IELTSListeningPractice: React.FC = () => {
   const [mistakeWords, setMistakeWords] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [ukVoices, setUkVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [allEnglishVoices, setAllEnglishVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [categoryStats, setCategoryStats] = useState<Record<string, CategoryStats>>({});
@@ -157,7 +161,7 @@ const IELTSListeningPractice: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('ielts_mistakes', JSON.stringify(mistakeWords));
+    localStorage. setItem('ielts_mistakes', JSON.stringify(mistakeWords));
   }, [mistakeWords]);
 
   useEffect(() => {
@@ -182,33 +186,63 @@ const IELTSListeningPractice: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Load voices with mobile support
   useEffect(() => {
+    let voicesLoaded = false;
+    
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
       
+      // On mobile, voices might be empty on first call
+      if (availableVoices.length === 0 && ! voicesLoaded) {
+        return; // Wait for onvoiceschanged
+      }
+      
+      voicesLoaded = true;
+      
+      // Filter for UK voices
       const ukOnly = availableVoices.filter(v => v.lang === 'en-GB');
       setUkVoices(ukOnly);
       
-      const bestUkVoice = 
-        ukOnly.find(v => v.name.includes('Google') && v.name.includes('UK')) ||
-        ukOnly. find(v => v.name. includes('Google')) ||
-        ukOnly.find(v => v.name.includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) ||
-        ukOnly[0];
+      // Get all English voices as fallback
+      const englishVoices = availableVoices.filter(v => v.lang && v.lang.startsWith('en'));
+      setAllEnglishVoices(englishVoices);
       
-      setSelectedVoice(prev => prev || bestUkVoice || null);
+      // Select best voice (UK preferred, any English as fallback)
+      const bestVoice = 
+        // Try UK voices first
+        ukOnly.find(v => v.name.includes('Google') && v.name.includes('UK')) ||
+        ukOnly.find(v => v. name.includes('Google')) ||
+        ukOnly.find(v => v. name.includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) ||
+        ukOnly[0] ||
+        // Fallback to any English voice on mobile
+        englishVoices.find(v => v.name.includes('Google')) ||
+        englishVoices.find(v => v.lang. startsWith('en-US')) ||
+        englishVoices[0];
+      
+      setSelectedVoice(prev => prev || bestVoice || null);
       
       const savedVoiceName = localStorage.getItem('selected_uk_voice');
       if (savedVoiceName) {
-        const savedVoice = ukOnly.find(v => v.name === savedVoiceName);
+        const savedVoice = availableVoices.find(v => v.name === savedVoiceName);
         if (savedVoice) setSelectedVoice(savedVoice);
       }
     };
 
+    // Initial load
     loadVoices();
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    
+    // Mobile Chrome needs this event
+    window.speechSynthesis. onvoiceschanged = loadVoices;
+    
+    // Force load on mobile with slight delay
+    const timeoutId = setTimeout(() => {
+      loadVoices();
+    }, 100);
 
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
+      clearTimeout(timeoutId);
     };
   }, []);
 
@@ -239,7 +273,7 @@ const IELTSListeningPractice: React.FC = () => {
         }
         
         utterance.rate = playbackSpeed;
-        utterance.pitch = 1;
+        utterance. pitch = 1;
         utterance.volume = 1;
         
         window.speechSynthesis.speak(utterance);
@@ -286,6 +320,21 @@ const IELTSListeningPractice: React.FC = () => {
     }
   };
 
+  const forceLoadVoices = () => {
+    const voices = window.speechSynthesis. getVoices();
+    const ukOnly = voices.filter(v => v.lang === 'en-GB');
+    const anyEnglish = voices.filter(v => v.lang && v.lang.startsWith('en'));
+    
+    setUkVoices(ukOnly);
+    setAllEnglishVoices(anyEnglish);
+    
+    if (ukOnly.length > 0 || anyEnglish.length > 0) {
+      const voice = ukOnly[0] || anyEnglish[0];
+      setSelectedVoice(voice);
+      speak('Voices loaded successfully');
+    }
+  };
+
   const handleCategoryClick = (category: string) => {
     const stats = categoryStats[category];
     const mistakeCount = getCategoryMistakeCount(category);
@@ -311,7 +360,7 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const startTest = (category: string | null = null, mode: 'normal' | 'mistakes' = 'normal') => {
-    let wordList: string[] = [];
+    let wordList:  string[] = [];
     let categoryName = '';
 
     if (mode === 'mistakes') {
@@ -324,7 +373,7 @@ const IELTSListeningPractice: React.FC = () => {
         categoryName = 'All Mistakes';
       }
     } else if (category) {
-      wordList = WORD_CATEGORIES[category] ?  [...WORD_CATEGORIES[category]] : [];
+      wordList = WORD_CATEGORIES[category] ?  [... WORD_CATEGORIES[category]] : [];
       categoryName = category;
     } else {
       wordList = Object.values(WORD_CATEGORIES).flat();
@@ -356,7 +405,7 @@ const IELTSListeningPractice: React.FC = () => {
       ...prev,
       [category]: {
         answered: total,
-        correct: correct,
+        correct:  correct,
         mistakes: total - correct,
         percentage: percentage,
         completed: true
@@ -375,7 +424,7 @@ const IELTSListeningPractice: React.FC = () => {
     setShowResult(true);
     
     const newScore = {
-      correct:  score.correct + (correct ? 1 : 0),
+      correct: score.correct + (correct ? 1 : 0),
       total: score.total + 1
     };
     setScore(newScore);
@@ -474,7 +523,7 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isPlaying && !isPaused) {
+    if (e. key === 'Enter' && isPlaying && !isPaused) {
       if (showResult) {
         if (! isCorrect) {
           nextWord();
@@ -510,7 +559,7 @@ const IELTSListeningPractice: React.FC = () => {
           <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-purple-200 py-2 z-50 min-w-[140px]">
             {SPEED_OPTIONS.map(option => (
               <button
-                key={option.value}
+                key={option. value}
                 onClick={() => handleSpeedChange(option.value)}
                 className={`w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors flex items-center justify-between ${
                   playbackSpeed === option.value ?  'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-700'
@@ -526,7 +575,7 @@ const IELTSListeningPractice: React.FC = () => {
         )}
       </div>
 
-      {ukVoices.length > 0 && (
+      {allEnglishVoices.length > 0 && (
         <div className="relative" ref={voiceMenuRef}>
           <button
             onClick={() => {
@@ -544,9 +593,9 @@ const IELTSListeningPractice: React.FC = () => {
           {showVoiceMenu && (
             <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-indigo-200 py-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto">
               <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-gray-200 mb-1">
-                UK Voices ({ukVoices.length})
+                {ukVoices.length > 0 ? `UK Voices (${ukVoices. length})` : `English Voices (${allEnglishVoices.length})`}
               </div>
-              {ukVoices.map(voice => (
+              {(ukVoices.length > 0 ?  ukVoices : allEnglishVoices).map(voice => (
                 <button
                   key={voice.name}
                   onClick={() => handleVoiceChange(voice)}
@@ -578,7 +627,7 @@ const IELTSListeningPractice: React.FC = () => {
     const totalAnswered = allCompletedStats. reduce((sum, s) => sum + s.answered, 0);
     const totalCorrect = allCompletedStats. reduce((sum, s) => sum + s.correct, 0);
     const totalMistakes = mistakeWords.length;
-    const overallPercentage = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+    const overallPercentage = totalAnswered > 0 ? Math. round((totalCorrect / totalAnswered) * 100) : 0;
     
     return (
       <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-6 mb-6 text-white">
@@ -726,7 +775,7 @@ const IELTSListeningPractice: React.FC = () => {
         {mistakeWords.length > 0 && (
           <button
             onClick={() => startTest(null, 'mistakes')}
-            className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all text-left flex flex-col justify-between h-32"
+            className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover: scale-105 transition-all text-left flex flex-col justify-between h-32"
           >
             <span className="text-2xl font-bold"><AlertCircle className="inline mr-2"/> Review Mistakes</span>
             <span className="opacity-80 text-sm">{mistakeWords.length} words to fix</span>
@@ -785,7 +834,7 @@ const IELTSListeningPractice: React.FC = () => {
 
   const renderResultsScreen = () => {
     const finalCorrect = score. correct;
-    const finalTotal = score. total;
+    const finalTotal = score.total;
     const finalMistakes = finalTotal - finalCorrect;
     const percentage = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
     
@@ -884,23 +933,46 @@ const IELTSListeningPractice: React.FC = () => {
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Voice: </span>
-                    <span className="font-medium text-purple-600">{selectedVoice?. name || 'None'}</span>
+                    <span className="font-medium text-purple-600">
+                      {selectedVoice?. name || 'None'}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Speed:</span>
                     <span className="font-medium text-purple-600">{playbackSpeed}x</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">UK Voices Available:</span>
-                    <span className="font-medium text-green-600">{ukVoices.length}</span>
+                    <span className="text-gray-600">
+                      {ukVoices.length > 0 ? 'UK Voices: ' : 'English Voices:'}
+                    </span>
+                    <span className="font-medium text-green-600">
+                      {ukVoices.length > 0 ? ukVoices.length : allEnglishVoices.length}
+                    </span>
                   </div>
                 </div>
                 
-                {ukVoices.length === 0 && (
-                  <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <p className="text-xs text-yellow-800">
-                      ⚠️ No UK voices detected. Try Chrome, Edge, or Safari for best results.
+                {ukVoices.length === 0 && allEnglishVoices.length > 0 && (
+                  <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-blue-800 mb-1">
+                      ℹ️ No UK voices available
                     </p>
+                    <p className="text-xs text-gray-600">
+                      ✅ Using {allEnglishVoices. length} English voice{allEnglishVoices.length > 1 ? 's' : ''} as fallback
+                    </p>
+                  </div>
+                )}
+                
+                {allEnglishVoices. length === 0 && (
+                  <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <p className="text-xs text-yellow-800 mb-2">
+                      ⚠️ No voices detected
+                    </p>
+                    <button
+                      onClick={forceLoadVoices}
+                      className="w-full px-3 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
+                    >
+                      🔄 Load Voices
+                    </button>
                   </div>
                 )}
               </div>
@@ -918,7 +990,7 @@ const IELTSListeningPractice: React.FC = () => {
           <div className="p-6 md:p-10">
             {showResults ?  (
               renderResultsScreen()
-            ) : !isPlaying ? (
+            ) : !isPlaying ?  (
               <div className="animate-in fade-in duration-500">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <BookOpen className="text-purple-500"/> Select a Category to Practice
@@ -936,7 +1008,7 @@ const IELTSListeningPractice: React.FC = () => {
 
                 <div className="flex justify-between items-center mb-8 text-sm">
                    <span className="text-gray-600">
-                     Category:  <strong className="text-purple-600">{selectedCategory}</strong>
+                     Category: <strong className="text-purple-600">{selectedCategory}</strong>
                    </span>
                    <div className="flex items-center gap-3">
                      <FloatingControls />
@@ -1007,50 +1079,4 @@ const IELTSListeningPractice: React.FC = () => {
                     <>
                       <button
                         onClick={checkAnswer}
-                        disabled={! userInput. trim()}
-                        className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-700 shadow-lg disabled:bg-gray-300 disabled:shadow-none transition-all transform hover:-translate-y-1"
-                      >
-                        Check Answer
-                      </button>
-                      <button
-                        onClick={togglePause}
-                        className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
-                        aria-label={isPaused ?  'Resume audio' : 'Pause audio'}
-                      >
-                        {isPaused ?  <Play /> : <Pause />}
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {! isCorrect && (
-                        <button
-                          onClick={nextWord}
-                          autoFocus
-                          className="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2"
-                        >
-                          Next Word <SkipForward size={20} />
-                        </button>
-                      )}
-                    </>
-                  )}
-                </div>
-                
-                <div className="mt-8 text-center">
-                   <button 
-                     onClick={goHome} 
-                     className="text-gray-400 hover:text-red-500 text-sm font-medium transition-colors"
-                   >
-                     Exit Test
-                   </button>
-                </div>
-
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default IELTSListeningPractice;
+                        disable
