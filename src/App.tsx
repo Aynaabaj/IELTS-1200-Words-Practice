@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen } from 'lucide-react';
+import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen, Trophy, RotateCcw, Home } from 'lucide-react';
 import './App.css';
 
 // --- DATA STRUCTURE (Complete Word List) ---
@@ -28,13 +28,13 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Continents": ["Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"],
   
-  "Countries":  ["Brazil", "China", "Denmark", "Egypt", "England", "France", "Germany", "Greece", "India", "Indonesia", "Italy", "Malaysia", "Mexico", "New Zealand", "Nigeria", "North Korea", "Pakistan", "Singapore", "Switzerland", "The Dominican Republic", "The Philippines", "Turkey", "United Kingdom"],
+  "Countries": ["Brazil", "China", "Denmark", "Egypt", "England", "France", "Germany", "Greece", "India", "Indonesia", "Italy", "Malaysia", "Mexico", "New Zealand", "Nigeria", "North Korea", "Pakistan", "Singapore", "Switzerland", "The Dominican Republic", "The Philippines", "Turkey", "United Kingdom"],
   
   "Languages": ["Bengali", "Bilingual", "Chinese", "Filipino", "French", "German", "Greek", "Hindi", "Italian", "Japanese", "Linguistics", "Mandarin", "Persian", "Polyglot", "Portuguese", "Punjabi", "Russian", "Thai", "Trilingual"],
   
   "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
   
-  "Homes": ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
+  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
   
   "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
   
@@ -74,12 +74,20 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Color": ["Black", "Blue", "Brown", "Green", "Grey", "Orange", "Pink", "Purple", "Red", "White", "Yellow"],
   
-  "Expressions and Time": ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
+  "Expressions and Time":  ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
   
   "Other": ["Activity", "Attitude", "Burger", "Carriage", "Chocolate", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Encyclopedia", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Junior", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Satellite", "Senior", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
 };
 
-const IELTSListeningPractice:  React.FC = () => {
+interface CategoryStats {
+  answered: number;
+  correct: number;
+  mistakes: number;
+  percentage: number;
+  completed: boolean;
+}
+
+const IELTSListeningPractice: React.FC = () => {
   const [words, setWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -92,6 +100,8 @@ const IELTSListeningPractice:  React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [showResults, setShowResults] = useState(false);
+  const [categoryStats, setCategoryStats] = useState<Record<string, CategoryStats>>({});
   
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -105,8 +115,11 @@ const IELTSListeningPractice:  React.FC = () => {
     [currentIndex, words.length]
   );
 
+  // Load data from localStorage
   useEffect(() => {
     const savedMistakes = localStorage.getItem('ielts_mistakes');
+    const savedStats = localStorage.getItem('ielts_category_stats');
+    
     if (savedMistakes) {
       try {
         setMistakeWords(JSON.parse(savedMistakes));
@@ -114,11 +127,24 @@ const IELTSListeningPractice:  React.FC = () => {
         console.warn('Failed to load saved mistakes:', error);
       }
     }
+    
+    if (savedStats) {
+      try {
+        setCategoryStats(JSON.parse(savedStats));
+      } catch (error) {
+        console.warn('Failed to load saved stats:', error);
+      }
+    }
   }, []);
 
+  // Save data to localStorage
   useEffect(() => {
     localStorage.setItem('ielts_mistakes', JSON.stringify(mistakeWords));
   }, [mistakeWords]);
+
+  useEffect(() => {
+    localStorage.setItem('ielts_category_stats', JSON.stringify(categoryStats));
+  }, [categoryStats]);
 
   useEffect(() => {
     const loadVoices = () => {
@@ -127,7 +153,7 @@ const IELTSListeningPractice:  React.FC = () => {
       
       const defaultVoice = availableVoices.find(v => 
         (v.name. includes("Google") || v.name.includes("Microsoft")) && v.lang. includes("en")
-      ) || availableVoices. find(v => v.lang. includes("en"));
+      ) || availableVoices. find(v => v.lang.includes("en"));
       
       setSelectedVoice(prev => prev || defaultVoice || null);
     };
@@ -158,9 +184,9 @@ const IELTSListeningPractice:  React.FC = () => {
         if (selectedVoice) utterance.voice = selectedVoice;
         utterance.rate = 0.85;
         utterance.pitch = 1;
-        utterance.volume = 1;
+        utterance. volume = 1;
         
-        window. speechSynthesis.speak(utterance);
+        window.speechSynthesis. speak(utterance);
       } catch (error) {
         console.warn('Speech synthesis error:', error);
       }
@@ -189,10 +215,17 @@ const IELTSListeningPractice:  React.FC = () => {
     let categoryName = '';
 
     if (mode === 'mistakes') {
-      wordList = [... mistakeWords];
-      categoryName = 'Mistakes Review';
+      if (category) {
+        // Filter mistakes for specific category
+        const categoryWords = WORD_CATEGORIES[category] || [];
+        wordList = mistakeWords.filter(word => categoryWords.includes(word));
+        categoryName = `${category} - Mistakes`;
+      } else {
+        wordList = [... mistakeWords];
+        categoryName = 'All Mistakes';
+      }
     } else if (category) {
-      wordList = WORD_CATEGORIES[category] ?  [... WORD_CATEGORIES[category]] : [];
+      wordList = WORD_CATEGORIES[category] ?  [...WORD_CATEGORIES[category]] : [];
       categoryName = category;
     } else {
       wordList = Object.values(WORD_CATEGORIES).flat();
@@ -210,10 +243,26 @@ const IELTSListeningPractice:  React.FC = () => {
     setScore({ correct: 0, total:  0 });
     setIsPaused(false);
     setSelectedCategory(categoryName);
+    setShowResults(false);
     
     setTimeout(() => {
       speak(shuffled[0]);
     }, 400);
+  };
+
+  const updateCategoryStats = (category: string, correct: number, total: number) => {
+    const percentage = total > 0 ? Math.round((correct / total) * 100) : 0;
+    
+    setCategoryStats(prev => ({
+      ...prev,
+      [category]: {
+        answered: total,
+        correct: correct,
+        mistakes: total - correct,
+        percentage: percentage,
+        completed: true
+      }
+    }));
   };
 
   const checkAnswer = () => {
@@ -237,6 +286,10 @@ const IELTSListeningPractice:  React.FC = () => {
       }
       speak(`Incorrect. The correct spelling is ${words[currentIndex]}`);
     } else {
+      // Remove from mistakes if corrected
+      if (mistakeWords.includes(words[currentIndex])) {
+        setMistakeWords(prev => prev.filter(w => w !== words[currentIndex]));
+      }
       speak('Correct');
       
       setTimeout(() => {
@@ -252,8 +305,18 @@ const IELTSListeningPractice:  React.FC = () => {
             speak(words[nextIdx]);
           }, 100);
         } else {
+          // Test completed
+          const finalCorrect = score.correct + 1;
+          const finalTotal = score.total + 1;
+          
+          // Update category stats
+          if (selectedCategory && ! selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
+            updateCategoryStats(selectedCategory, finalCorrect, finalTotal);
+          }
+          
           setIsPlaying(false);
-          speak(`Test completed! You got ${score.correct + 1} out of ${words.length}`);
+          setShowResults(true);
+          speak(`Test completed!  You got ${finalCorrect} out of ${finalTotal}`);
         }
       }, 1500);
     }
@@ -273,8 +336,16 @@ const IELTSListeningPractice:  React.FC = () => {
       }, 300);
     } else {
       const finalCorrect = score.correct + (showResult && isCorrect ? 1 :  0);
+      const finalTotal = score.total + (showResult ?  0 : 1);
+      
+      // Update category stats
+      if (selectedCategory && !selectedCategory. includes('Mistakes') && !selectedCategory.includes('Mixed')) {
+        updateCategoryStats(selectedCategory, finalCorrect, finalTotal);
+      }
+      
       setIsPlaying(false);
-      speak(`Test completed! You got ${finalCorrect} out of ${words.length}`);
+      setShowResults(true);
+      speak(`Test completed! You got ${finalCorrect} out of ${finalTotal}`);
     }
   };
 
@@ -282,6 +353,12 @@ const IELTSListeningPractice:  React.FC = () => {
     if (window.confirm('Are you sure you want to clear your saved mistake words?')) {
       setMistakeWords([]);
     }
+  };
+
+  const goHome = () => {
+    setIsPlaying(false);
+    setShowResults(false);
+    window.speechSynthesis.cancel();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -296,7 +373,7 @@ const IELTSListeningPractice:  React.FC = () => {
     }
   };
 
-  const handleVoiceChange = (e: React. ChangeEvent<HTMLSelectElement>) => {
+  const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const voiceId = e.target.value;
     const voice = voices.find(v => `${v.name}__${v.lang}` === voiceId);
     
@@ -313,6 +390,11 @@ const IELTSListeningPractice:  React.FC = () => {
     } else {
       setSelectedVoice(null);
     }
+  };
+
+  const getCategoryMistakeCount = (category: string): number => {
+    const categoryWords = WORD_CATEGORIES[category] || [];
+    return mistakeWords.filter(word => categoryWords.includes(word)).length;
   };
 
   const renderCategoryGrid = () => (
@@ -335,18 +417,121 @@ const IELTSListeningPractice:  React.FC = () => {
         </button>
       )}
 
-      {Object.keys(WORD_CATEGORIES).map((cat) => (
-        <button
-          key={cat}
-          onClick={() => startTest(cat, 'normal')}
-          className="bg-white border-2 border-purple-100 p-6 rounded-xl hover:border-purple-500 hover:shadow-md transition-all text-left flex flex-col justify-between h-32 group"
-        >
-          <span className="text-lg font-semibold text-gray-700 group-hover:text-purple-600">{cat}</span>
-          <span className="text-gray-400 text-sm">{WORD_CATEGORIES[cat]. length} words</span>
-        </button>
-      ))}
+      {Object.keys(WORD_CATEGORIES).map((cat) => {
+        const stats = categoryStats[cat];
+        const mistakeCount = getCategoryMistakeCount(cat);
+        const isCompleted = stats?. completed;
+        
+        return (
+          <div key={cat} className="relative">
+            <button
+              onClick={() => startTest(cat, 'normal')}
+              className={`w-full p-6 rounded-xl hover:shadow-md transition-all text-left flex flex-col justify-between h-32 group ${
+                isCompleted 
+                  ? 'bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300' 
+                  : 'bg-white border-2 border-purple-100 hover:border-purple-500'
+              }`}
+            >
+              <div className="flex justify-between items-start">
+                <span className={`text-lg font-semibold ${
+                  isCompleted ? 'text-green-700' : 'text-gray-700 group-hover:text-purple-600'
+                }`}>
+                  {cat}
+                </span>
+                {isCompleted && (
+                  <CheckCircle className="text-green-600" size={24} />
+                )}
+              </div>
+              <div className="space-y-1">
+                <span className="text-gray-400 text-sm">{WORD_CATEGORIES[cat]. length} words</span>
+                {stats && (
+                  <div className="text-sm font-semibold text-green-600">
+                    {stats.percentage}% • {stats.correct}/{stats.answered}
+                  </div>
+                )}
+              </div>
+            </button>
+            
+            {mistakeCount > 0 && (
+              <button
+                onClick={() => startTest(cat, 'mistakes')}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-lg hover:bg-red-600 transition-all hover:scale-110"
+                title="Review mistakes in this category"
+              >
+                {mistakeCount}
+              </button>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
+
+  const renderResultsScreen = () => {
+    const finalCorrect = score.correct + (isCorrect ? 1 : 0);
+    const finalTotal = score.total;
+    const percentage = finalTotal > 0 ?  Math.round((finalCorrect / finalTotal) * 100) : 0;
+    
+    return (
+      <div className="max-w-2xl mx-auto animate-in fade-in duration-500">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full mb-4">
+            <Trophy className="text-white" size={48} />
+          </div>
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Completed!</h2>
+          <p className="text-gray-500">{selectedCategory}</p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+          <div className="text-center mb-6">
+            <div className="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
+              {percentage}%
+            </div>
+            <p className="text-gray-600">Overall Score</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="bg-blue-50 rounded-xl p-4 text-center">
+              <div className="text-3xl font-bold text-blue-600">{finalTotal}</div>
+              <div className="text-sm text-gray-600">Answered</div>
+            </div>
+            <div className="bg-green-50 rounded-xl p-4 text-center">
+              <div className="text-3xl font-bold text-green-600">{finalCorrect}</div>
+              <div className="text-sm text-gray-600">Correct</div>
+            </div>
+            <div className="bg-red-50 rounded-xl p-4 text-center">
+              <div className="text-3xl font-bold text-red-600">{finalTotal - finalCorrect}</div>
+              <div className="text-sm text-gray-600">Mistakes</div>
+            </div>
+          </div>
+
+          <div className="w-full bg-gray-200 rounded-full h-4">
+            <div 
+              className="bg-gradient-to-r from-green-400 to-green-600 h-4 rounded-full transition-all duration-1000" 
+              style={{ width: `${percentage}%` }}
+            ></div>
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          <button
+            onClick={goHome}
+            className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+          >
+            <Home size={24} />
+            Back to Home
+          </button>
+          <button
+            onClick={() => startTest(selectedCategory?. replace(' - Mistakes', '') || null, 'normal')}
+            className="flex-1 bg-white border-2 border-purple-500 text-purple-600 py-4 rounded-xl font-bold text-lg hover: bg-purple-50 transition-all flex items-center justify-center gap-2"
+          >
+            <RotateCcw size={24} />
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
@@ -360,7 +545,7 @@ const IELTSListeningPractice:  React.FC = () => {
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           
-          {! isPlaying && (
+          {! isPlaying && ! showResults && (
             <div className="bg-purple-50 p-4 border-b border-purple-100 flex flex-wrap gap-4 items-center justify-between">
                <div className="flex items-center gap-2 text-purple-800 font-medium">
                   <Settings size={20} />
@@ -390,7 +575,9 @@ const IELTSListeningPractice:  React.FC = () => {
           )}
 
           <div className="p-6 md:p-10">
-            {! isPlaying ? (
+            {showResults ?  (
+              renderResultsScreen()
+            ) : !isPlaying ?  (
               <div className="animate-in fade-in duration-500">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <BookOpen className="text-purple-500"/> Select a Category to Practice
@@ -399,7 +586,7 @@ const IELTSListeningPractice:  React.FC = () => {
               </div>
             ) : (
               <div className="max-w-2xl mx-auto">
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                <div className="w-full bg-gray-200 rounded-full h-2. 5 mb-6">
                   <div 
                     className="bg-purple-600 h-2.5 rounded-full transition-all duration-300" 
                     style={{ width:  `${progressPercent}%` }}
@@ -472,7 +659,7 @@ const IELTSListeningPractice:  React.FC = () => {
                     <>
                       <button
                         onClick={checkAnswer}
-                        disabled={! userInput.trim()}
+                        disabled={! userInput. trim()}
                         className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-700 shadow-lg disabled:bg-gray-300 disabled:shadow-none transition-all transform hover:-translate-y-1"
                       >
                         Check Answer
@@ -482,7 +669,7 @@ const IELTSListeningPractice:  React.FC = () => {
                         className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
                         aria-label={isPaused ?  'Resume audio' : 'Pause audio'}
                       >
-                        {isPaused ? <Play /> : <Pause />}
+                        {isPaused ?  <Play /> : <Pause />}
                       </button>
                     </>
                   ) : (
@@ -502,10 +689,7 @@ const IELTSListeningPractice:  React.FC = () => {
                 
                 <div className="mt-8 text-center">
                    <button 
-                     onClick={() => { 
-                       window.speechSynthesis.cancel(); 
-                       setIsPlaying(false); 
-                     }} 
+                     onClick={goHome} 
                      className="text-gray-400 hover:text-red-500 text-sm font-medium transition-colors"
                    >
                      Exit Test
