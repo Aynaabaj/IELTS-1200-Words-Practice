@@ -161,24 +161,21 @@ const IELTSListeningPractice: React.FC = () => {
   const speak = (text: string, interrupt = true) => {
     if ('speechSynthesis' in window) {
       try {
-        if (interrupt) {
-          window.speechSynthesis.cancel();
-          // Add small delay for mobile browsers to process cancel
-          setTimeout(() => {
-            const utterance = new SpeechSynthesisUtterance(text);
-            if (selectedVoice) utterance.voice = selectedVoice;
-            utterance.rate = playbackSpeed;
-            utterance.pitch = 1;
-            utterance.volume = 1;
-            window.speechSynthesis.speak(utterance);
-          }, 50);
-        } else {
+        const createAndSpeak = () => {
           const utterance = new SpeechSynthesisUtterance(text);
           if (selectedVoice) utterance.voice = selectedVoice;
           utterance.rate = playbackSpeed;
           utterance.pitch = 1;
           utterance.volume = 1;
           window.speechSynthesis.speak(utterance);
+        };
+        
+        if (interrupt) {
+          window.speechSynthesis.cancel();
+          // Add small delay for mobile browsers to process cancel
+          setTimeout(createAndSpeak, 50);
+        } else {
+          createAndSpeak();
         }
       } catch (error) { console.warn('Speech synthesis error:', error); }
     }
