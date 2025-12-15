@@ -3,7 +3,7 @@ import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, S
 import './App.css';
 
 // --- DATA STRUCTURE (Complete Word List) ---
-const WORD_CATEGORIES:  Record<string, string[]> = {
+const WORD_CATEGORIES:   Record<string, string[]> = {
   "Days of the Week": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekdays", "Weekend"],
   
   "Months of the Year": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -34,7 +34,7 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
   
-  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
+  "Homes": ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
   
   "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
   
@@ -74,7 +74,7 @@ const WORD_CATEGORIES:  Record<string, string[]> = {
   
   "Color": ["Black", "Blue", "Brown", "Green", "Grey", "Orange", "Pink", "Purple", "Red", "White", "Yellow"],
   
-  "Expressions and Time":  ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
+  "Expressions and Time": ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
   
   "Other": ["Activity", "Attitude", "Burger", "Carriage", "Chocolate", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Encyclopedia", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Junior", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Satellite", "Senior", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
 };
@@ -111,7 +111,7 @@ const IELTSListeningPractice: React.FC = () => {
   );
 
   const progressPercent = useMemo(() => 
-    words.length ?  ((currentIndex + 1) / words.length) * 100 : 0,
+    words.length ?   ((currentIndex + 1) / words.length) * 100 : 0,
     [currentIndex, words.length]
   );
 
@@ -130,7 +130,7 @@ const IELTSListeningPractice: React.FC = () => {
     
     if (savedStats) {
       try {
-        setCategoryStats(JSON.parse(savedStats));
+        setCategoryStats(JSON. parse(savedStats));
       } catch (error) {
         console.warn('Failed to load saved stats:', error);
       }
@@ -139,7 +139,7 @@ const IELTSListeningPractice: React.FC = () => {
 
   // Save data to localStorage
   useEffect(() => {
-    localStorage.setItem('ielts_mistakes', JSON.stringify(mistakeWords));
+    localStorage. setItem('ielts_mistakes', JSON.stringify(mistakeWords));
   }, [mistakeWords]);
 
   useEffect(() => {
@@ -152,7 +152,7 @@ const IELTSListeningPractice: React.FC = () => {
       setVoices(availableVoices);
       
       const defaultVoice = availableVoices.find(v => 
-        (v.name. includes("Google") || v.name.includes("Microsoft")) && v.lang. includes("en")
+        (v.name.includes("Google") || v.name.includes("Microsoft")) && v.lang. includes("en")
       ) || availableVoices. find(v => v.lang.includes("en"));
       
       setSelectedVoice(prev => prev || defaultVoice || null);
@@ -168,7 +168,7 @@ const IELTSListeningPractice: React.FC = () => {
 
   const shuffleArray = (array: string[]): string[] => {
     const shuffled = [...array];
-    for (let i = shuffled. length - 1; i > 0; i--) {
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
@@ -211,7 +211,7 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const startTest = (category: string | null = null, mode: 'normal' | 'mistakes' = 'normal') => {
-    let wordList: string[] = [];
+    let wordList:  string[] = [];
     let categoryName = '';
 
     if (mode === 'mistakes') {
@@ -257,7 +257,7 @@ const IELTSListeningPractice: React.FC = () => {
       ...prev,
       [category]: {
         answered: total,
-        correct: correct,
+        correct:  correct,
         mistakes: total - correct,
         percentage: percentage,
         completed: true
@@ -275,10 +275,12 @@ const IELTSListeningPractice: React.FC = () => {
     setIsCorrect(correct);
     setShowResult(true);
     
-    setScore(prev => ({
-      correct: prev.correct + (correct ?  1 : 0),
-      total: prev.total + 1
-    }));
+    // Update score immediately
+    const newScore = {
+      correct: score.correct + (correct ? 1 : 0),
+      total: score.total + 1
+    };
+    setScore(newScore);
 
     if (! correct) {
       if (! mistakeWords.includes(words[currentIndex])) {
@@ -305,18 +307,14 @@ const IELTSListeningPractice: React.FC = () => {
             speak(words[nextIdx]);
           }, 100);
         } else {
-          // Test completed
-          const finalCorrect = score.correct + 1;
-          const finalTotal = score.total + 1;
-          
-          // Update category stats
+          // Test completed - use the updated score
           if (selectedCategory && ! selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
-            updateCategoryStats(selectedCategory, finalCorrect, finalTotal);
+            updateCategoryStats(selectedCategory, newScore.correct, newScore.total);
           }
           
           setIsPlaying(false);
           setShowResults(true);
-          speak(`Test completed!  You got ${finalCorrect} out of ${finalTotal}`);
+          speak(`Test completed! You got ${newScore.correct} out of ${newScore.total}`);
         }
       }, 1500);
     }
@@ -335,17 +333,14 @@ const IELTSListeningPractice: React.FC = () => {
         speak(words[nextIdx]);
       }, 300);
     } else {
-      const finalCorrect = score.correct + (showResult && isCorrect ? 1 :  0);
-      const finalTotal = score.total + (showResult ?  0 : 1);
-      
-      // Update category stats
-      if (selectedCategory && !selectedCategory. includes('Mistakes') && !selectedCategory.includes('Mixed')) {
-        updateCategoryStats(selectedCategory, finalCorrect, finalTotal);
+      // Test completed - use current score state
+      if (selectedCategory && ! selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
+        updateCategoryStats(selectedCategory, score.correct, score.total);
       }
       
       setIsPlaying(false);
       setShowResults(true);
-      speak(`Test completed! You got ${finalCorrect} out of ${finalTotal}`);
+      speak(`Test completed! You got ${score.correct} out of ${score.total}`);
     }
   };
 
@@ -468,9 +463,11 @@ const IELTSListeningPractice: React.FC = () => {
   );
 
   const renderResultsScreen = () => {
-    const finalCorrect = score.correct + (isCorrect ? 1 : 0);
+    // Use actual score state - don't add isCorrect again
+    const finalCorrect = score.correct;
     const finalTotal = score.total;
-    const percentage = finalTotal > 0 ?  Math.round((finalCorrect / finalTotal) * 100) : 0;
+    const finalMistakes = finalTotal - finalCorrect;
+    const percentage = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
     
     return (
       <div className="max-w-2xl mx-auto animate-in fade-in duration-500">
@@ -500,7 +497,7 @@ const IELTSListeningPractice: React.FC = () => {
               <div className="text-sm text-gray-600">Correct</div>
             </div>
             <div className="bg-red-50 rounded-xl p-4 text-center">
-              <div className="text-3xl font-bold text-red-600">{finalTotal - finalCorrect}</div>
+              <div className="text-3xl font-bold text-red-600">{finalMistakes}</div>
               <div className="text-sm text-gray-600">Mistakes</div>
             </div>
           </div>
@@ -522,8 +519,11 @@ const IELTSListeningPractice: React.FC = () => {
             Back to Home
           </button>
           <button
-            onClick={() => startTest(selectedCategory?. replace(' - Mistakes', '') || null, 'normal')}
-            className="flex-1 bg-white border-2 border-purple-500 text-purple-600 py-4 rounded-xl font-bold text-lg hover: bg-purple-50 transition-all flex items-center justify-center gap-2"
+            onClick={() => {
+              const cleanCategory = selectedCategory?. replace(' - Mistakes', '').replace('All Mistakes', '');
+              startTest(cleanCategory || null, 'normal');
+            }}
+            className="flex-1 bg-white border-2 border-purple-500 text-purple-600 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-all flex items-center justify-center gap-2"
           >
             <RotateCcw size={24} />
             Try Again
@@ -575,7 +575,7 @@ const IELTSListeningPractice: React.FC = () => {
           )}
 
           <div className="p-6 md:p-10">
-            {showResults ?  (
+            {showResults ? (
               renderResultsScreen()
             ) : !isPlaying ?  (
               <div className="animate-in fade-in duration-500">
@@ -619,7 +619,7 @@ const IELTSListeningPractice: React.FC = () => {
                     disabled={showResult || isPaused}
                     className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${
                       showResult 
-                        ? isCorrect ?  'border-green-500 text-green-700' :  'border-red-500 text-red-700'
+                        ? isCorrect ?  'border-green-500 text-green-700' : 'border-red-500 text-red-700'
                         : 'border-gray-300 focus:border-purple-500 text-gray-800'
                     }`}
                     placeholder="Type here..."
@@ -669,7 +669,7 @@ const IELTSListeningPractice: React.FC = () => {
                         className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors"
                         aria-label={isPaused ?  'Resume audio' : 'Pause audio'}
                       >
-                        {isPaused ?  <Play /> : <Pause />}
+                        {isPaused ? <Play /> : <Pause />}
                       </button>
                     </>
                   ) : (
