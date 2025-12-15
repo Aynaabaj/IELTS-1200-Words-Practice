@@ -3,7 +3,7 @@ import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, S
 import './App.css';
 
 // --- DATA STRUCTURE (Complete Word List) ---
-const WORD_CATEGORIES:   Record<string, string[]> = {
+const WORD_CATEGORIES:    Record<string, string[]> = {
   "Days of the Week": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekdays", "Weekend"],
   
   "Months of the Year": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -16,7 +16,7 @@ const WORD_CATEGORIES:   Record<string, string[]> = {
   
   "Marketing": ["Business Card", "Catalogue", "Collecting Data", "Competition", "Customer", "Display", "Entertainment Industry", "Interview", "Leadership", "Management", "Manufacture", "Marketing Strategies", "Mass Media", "Merchandise", "Newsletter", "Poll", "Products", "Profit Margin", "Questionnaire", "Recruitment", "Research Method", "Special Offer", "Statistic", "Survey", "Trainee", "Training", "TV Program"],
   
-  "Health": ["Balanced Diet", "Beans", "Blackcurrant", "Bread", "Carbohydrates", "Cereals", "Cheese", "Citrus Fruits", "Disease", "Egg Yolk", "Eggs", "Food Pyramid", "Fruit", "Green Pepper", "Keep-Fit", "Leisure Time", "Liver", "Meal", "Meat", "Medicine Treatment", "Milk", "Minerals", "Nursery", "Nursing Care", "Nuts", "Outdoor Activities", "Pasta", "Pizza", "Potatoes", "Protein", "Regular Exercise", "Remedy", "Rice", "Salad Bar", "Seafood", "Tai-Chi", "Tomatoes", "Vegetables", "Vegetarian", "Vitamin", "Yoghurt", "Yoga", "Zinc"],
+  "Health":  ["Balanced Diet", "Beans", "Blackcurrant", "Bread", "Carbohydrates", "Cereals", "Cheese", "Citrus Fruits", "Disease", "Egg Yolk", "Eggs", "Food Pyramid", "Fruit", "Green Pepper", "Keep-Fit", "Leisure Time", "Liver", "Meal", "Meat", "Medicine Treatment", "Milk", "Minerals", "Nursery", "Nursing Care", "Nuts", "Outdoor Activities", "Pasta", "Pizza", "Potatoes", "Protein", "Regular Exercise", "Remedy", "Rice", "Salad Bar", "Seafood", "Tai-Chi", "Tomatoes", "Vegetables", "Vegetarian", "Vitamin", "Yoghurt", "Yoga", "Zinc"],
   
   "Nature": ["Avalanche", "Canyon", "Catastrophe", "Cliff", "Coast", "Dam", "Desertification", "Disaster", "Earthquake", "Environment", "Erosion", "Field", "Flood", "Footbridge", "Forest", "Hill", "Hurricane", "Island", "Jungle", "Lake", "Landslides", "Mountain", "Oasis", "Peninsula", "Pond", "Reef", "River", "Storm", "Tornado", "Typhoon", "Valley", "Village", "Volcano", "Waterfall"],
   
@@ -34,7 +34,7 @@ const WORD_CATEGORIES:   Record<string, string[]> = {
   
   "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
   
-  "Homes": ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
+  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
   
   "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
   
@@ -98,7 +98,7 @@ const IELTSListeningPractice: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [mistakeWords, setMistakeWords] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [ukVoices, setUkVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [categoryStats, setCategoryStats] = useState<Record<string, CategoryStats>>({});
@@ -112,7 +112,7 @@ const IELTSListeningPractice: React.FC = () => {
 
   const progressPercent = useMemo(() => 
     words.length ?   ((currentIndex + 1) / words.length) * 100 : 0,
-    [currentIndex, words.length]
+    [currentIndex, words. length]
   );
 
   // Load data from localStorage
@@ -146,16 +146,33 @@ const IELTSListeningPractice: React.FC = () => {
     localStorage.setItem('ielts_category_stats', JSON.stringify(categoryStats));
   }, [categoryStats]);
 
+  // Load ONLY UK voices
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
-      setVoices(availableVoices);
       
-      const defaultVoice = availableVoices.find(v => 
-        (v.name.includes("Google") || v.name.includes("Microsoft")) && v.lang. includes("en")
-      ) || availableVoices. find(v => v.lang.includes("en"));
+      // Filter for UK voices only (en-GB)
+      const ukOnly = availableVoices.filter(v => v.lang === 'en-GB');
+      setUkVoices(ukOnly);
       
-      setSelectedVoice(prev => prev || defaultVoice || null);
+      // Select best UK voice automatically
+      const bestUkVoice = 
+        // Priority 1: Google UK voices (best quality)
+        ukOnly.find(v => v.name. includes('Google') && v.name.includes('UK')) ||
+        ukOnly.find(v => v. name.includes('Google')) ||
+        // Priority 2: Microsoft UK voices
+        ukOnly.find(v => v.name.includes('Microsoft') || v.name.  includes('Hazel') || v.name.includes('Daniel')) ||
+        // Priority 3: Any UK voice
+        ukOnly[0];
+      
+      setSelectedVoice(prev => prev || bestUkVoice || null);
+      
+      // Save selected voice
+      const savedVoiceName = localStorage.getItem('selected_uk_voice');
+      if (savedVoiceName) {
+        const savedVoice = ukOnly.find(v => v.name === savedVoiceName);
+        if (savedVoice) setSelectedVoice(savedVoice);
+      }
     };
 
     loadVoices();
@@ -166,9 +183,16 @@ const IELTSListeningPractice: React.FC = () => {
     };
   }, []);
 
+  // Save voice preference
+  useEffect(() => {
+    if (selectedVoice) {
+      localStorage.setItem('selected_uk_voice', selectedVoice.name);
+    }
+  }, [selectedVoice]);
+
   const shuffleArray = (array: string[]): string[] => {
     const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    for (let i = shuffled. length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
@@ -181,12 +205,17 @@ const IELTSListeningPractice: React.FC = () => {
         if (interrupt) window.speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(text);
-        if (selectedVoice) utterance.voice = selectedVoice;
-        utterance.rate = 0.85;
-        utterance.pitch = 1;
-        utterance. volume = 1;
         
-        window.speechSynthesis. speak(utterance);
+        // Use selected UK voice
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+        
+        utterance.rate = 0.9;  // Slightly slower for clarity
+        utterance.pitch = 1;
+        utterance.volume = 1;
+        
+        window.speechSynthesis.speak(utterance);
       } catch (error) {
         console.warn('Speech synthesis error:', error);
       }
@@ -194,14 +223,14 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const togglePause = () => {
-    if (! ('speechSynthesis' in window)) return;
+    if (!  ('speechSynthesis' in window)) return;
 
     if (window.speechSynthesis.speaking) {
       if (! isPaused) {
-        window.speechSynthesis.pause();
+        window.speechSynthesis. pause();
         setIsPaused(true);
       } else {
-        window.speechSynthesis. resume();
+        window.speechSynthesis.resume();
         setIsPaused(false);
       }
     } else {
@@ -211,12 +240,11 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const startTest = (category: string | null = null, mode: 'normal' | 'mistakes' = 'normal') => {
-    let wordList:  string[] = [];
+    let wordList: string[] = [];
     let categoryName = '';
 
     if (mode === 'mistakes') {
       if (category) {
-        // Filter mistakes for specific category
         const categoryWords = WORD_CATEGORIES[category] || [];
         wordList = mistakeWords.filter(word => categoryWords.includes(word));
         categoryName = `${category} - Mistakes`;
@@ -225,7 +253,7 @@ const IELTSListeningPractice: React.FC = () => {
         categoryName = 'All Mistakes';
       }
     } else if (category) {
-      wordList = WORD_CATEGORIES[category] ?  [...WORD_CATEGORIES[category]] : [];
+      wordList = WORD_CATEGORIES[category] ?  [... WORD_CATEGORIES[category]] : [];
       categoryName = category;
     } else {
       wordList = Object.values(WORD_CATEGORIES).flat();
@@ -255,9 +283,9 @@ const IELTSListeningPractice: React.FC = () => {
     
     setCategoryStats(prev => ({
       ...prev,
-      [category]: {
+      [category]:  {
         answered: total,
-        correct:  correct,
+        correct: correct,
         mistakes: total - correct,
         percentage: percentage,
         completed: true
@@ -266,7 +294,7 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const checkAnswer = () => {
-    if (!userInput.trim()) return;
+    if (! userInput.trim()) return;
 
     const cleanInput = userInput.trim().toLowerCase();
     const cleanTarget = (words[currentIndex] || '').toLowerCase();
@@ -275,7 +303,6 @@ const IELTSListeningPractice: React.FC = () => {
     setIsCorrect(correct);
     setShowResult(true);
     
-    // Update score immediately
     const newScore = {
       correct: score.correct + (correct ? 1 : 0),
       total: score.total + 1
@@ -286,11 +313,10 @@ const IELTSListeningPractice: React.FC = () => {
       if (! mistakeWords.includes(words[currentIndex])) {
         setMistakeWords(prev => [...prev, words[currentIndex]]);
       }
-      speak(`Incorrect. The correct spelling is ${words[currentIndex]}`);
+      speak(`Incorrect.  The correct spelling is ${words[currentIndex]}`);
     } else {
-      // Remove from mistakes if corrected
       if (mistakeWords.includes(words[currentIndex])) {
-        setMistakeWords(prev => prev.filter(w => w !== words[currentIndex]));
+        setMistakeWords(prev => prev. filter(w => w !== words[currentIndex]));
       }
       speak('Correct');
       
@@ -307,14 +333,13 @@ const IELTSListeningPractice: React.FC = () => {
             speak(words[nextIdx]);
           }, 100);
         } else {
-          // Test completed - use the updated score
           if (selectedCategory && ! selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
             updateCategoryStats(selectedCategory, newScore.correct, newScore.total);
           }
           
           setIsPlaying(false);
           setShowResults(true);
-          speak(`Test completed! You got ${newScore.correct} out of ${newScore.total}`);
+          speak(`Test completed!  You got ${newScore.correct} out of ${newScore.total}`);
         }
       }, 1500);
     }
@@ -333,14 +358,13 @@ const IELTSListeningPractice: React.FC = () => {
         speak(words[nextIdx]);
       }, 300);
     } else {
-      // Test completed - use current score state
-      if (selectedCategory && ! selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
+      if (selectedCategory && !selectedCategory.includes('Mistakes') && !selectedCategory.includes('Mixed')) {
         updateCategoryStats(selectedCategory, score.correct, score.total);
       }
       
       setIsPlaying(false);
       setShowResults(true);
-      speak(`Test completed! You got ${score.correct} out of ${score.total}`);
+      speak(`Test completed! You got ${score.correct} out of ${score. total}`);
     }
   };
 
@@ -369,11 +393,12 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const handleVoiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const voiceId = e.target.value;
-    const voice = voices.find(v => `${v.name}__${v.lang}` === voiceId);
+    const voiceName = e.target.value;
+    const voice = ukVoices.find(v => v.name === voiceName);
     
     if (voice) {
       setSelectedVoice(voice);
+      // Test the voice
       try {
         const utterance = new SpeechSynthesisUtterance("Voice selected");
         utterance.voice = voice;
@@ -382,8 +407,6 @@ const IELTSListeningPractice: React.FC = () => {
       } catch (error) {
         console.warn('Voice test error:', error);
       }
-    } else {
-      setSelectedVoice(null);
     }
   };
 
@@ -405,7 +428,7 @@ const IELTSListeningPractice: React.FC = () => {
       {mistakeWords.length > 0 && (
         <button
           onClick={() => startTest(null, 'mistakes')}
-          className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all text-left flex flex-col justify-between h-32"
+          className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover: shadow-xl hover:scale-105 transition-all text-left flex flex-col justify-between h-32"
         >
           <span className="text-2xl font-bold"><AlertCircle className="inline mr-2"/> Review Mistakes</span>
           <span className="opacity-80 text-sm">{mistakeWords.length} words to fix</span>
@@ -463,9 +486,8 @@ const IELTSListeningPractice: React.FC = () => {
   );
 
   const renderResultsScreen = () => {
-    // Use actual score state - don't add isCorrect again
     const finalCorrect = score.correct;
-    const finalTotal = score.total;
+    const finalTotal = score. total;
     const finalMistakes = finalTotal - finalCorrect;
     const percentage = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
     
@@ -546,36 +568,66 @@ const IELTSListeningPractice: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           
           {! isPlaying && ! showResults && (
-            <div className="bg-purple-50 p-4 border-b border-purple-100 flex flex-wrap gap-4 items-center justify-between">
-               <div className="flex items-center gap-2 text-purple-800 font-medium">
-                  <Settings size={20} />
-                  <span>Settings</span>
-               </div>
-               <div className="flex items-center gap-2">
-                 <label className="text-sm text-gray-600">Voice:  </label>
-                 <select 
-                    className="p-2 rounded border border-gray-300 text-sm min-w-[200px]"
+            <div className="bg-purple-50 p-4 border-b border-purple-100">
+              <div className="flex items-center gap-2 text-purple-800 font-medium mb-4">
+                <Settings size={20} />
+                <span>Voice Settings (UK English Only 🇬🇧)</span>
+              </div>
+              
+              {ukVoices.length > 0 ?  (
+                <div className="p-4 bg-white rounded-lg border border-purple-200">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Select British Voice ({ukVoices.length} available)
+                  </label>
+                  <select
+                    value={selectedVoice?.name || ''}
                     onChange={handleVoiceChange}
-                    value={selectedVoice ?  `${selectedVoice.name}__${selectedVoice.lang}` : ''}
-                 >
-                   <option value="">Default Browser Voice</option>
-                   {voices.filter(v => v.lang && v.lang.includes('en')).map(v => (
-                     <option key={`${v.name}__${v.lang}`} value={`${v.name}__${v. lang}`}>
-                       {v.name} ({v.lang})
-                     </option>
-                   ))}
-                 </select>
-               </div>
-               {mistakeWords.length > 0 && (
-                 <button onClick={clearMistakes} className="text-xs text-red-500 hover:text-red-700 underline">
-                   Clear History
-                 </button>
-               )}
+                    className="w-full p-2 border border-gray-300 rounded text-sm mb-2"
+                  >
+                    {ukVoices.map(v => (
+                      <option key={v.name} value={v.name}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => speak("This is a test of the selected British voice")}
+                    className="w-full px-4 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors"
+                  >
+                    🔊 Test Voice
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Currently using: <strong>{selectedVoice?.name || 'None'}</strong>
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <p className="text-sm text-yellow-800 mb-2">
+                    ⚠️ No British English (en-GB) voices found on your system. 
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <strong>Tip:</strong> For best results, use: 
+                  </p>
+                  <ul className="text-xs text-gray-600 list-disc list-inside mt-1">
+                    <li><strong>Chrome/Edge:</strong> Voices load automatically</li>
+                    <li><strong>Safari (Mac):</strong> Has excellent UK voices (Daniel, Kate)</li>
+                    <li><strong>Firefox:</strong> Uses system voices</li>
+                  </ul>
+                </div>
+              )}
+
+              {mistakeWords.length > 0 && (
+                <div className="mt-4 text-center">
+                  <button onClick={clearMistakes} className="text-xs text-red-500 hover:text-red-700 underline">
+                    Clear Mistake History
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
           <div className="p-6 md:p-10">
-            {showResults ? (
+            {showResults ?  (
               renderResultsScreen()
             ) : !isPlaying ?  (
               <div className="animate-in fade-in duration-500">
@@ -637,7 +689,7 @@ const IELTSListeningPractice: React.FC = () => {
                       {isCorrect ? (
                         <div className="flex items-center justify-center gap-2 text-green-600">
                           <CheckCircle size={28} />
-                          <span className="text-2xl font-bold">Correct!  </span>
+                          <span className="text-2xl font-bold">Correct! </span>
                         </div>
                       ) : (
                         <div className="text-red-600">
