@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen, Trophy, RotateCcw, Home } from 'lucide-react';
+import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen, Trophy, RotateCcw, Home, Gauge, X } from 'lucide-react';
 import './App.css';
 
 // --- DATA STRUCTURE (Complete Word List) ---
-const WORD_CATEGORIES:    Record<string, string[]> = {
+const WORD_CATEGORIES:      Record<string, string[]> = {
   "Days of the Week": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekdays", "Weekend"],
   
   "Months of the Year": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
@@ -16,7 +16,7 @@ const WORD_CATEGORIES:    Record<string, string[]> = {
   
   "Marketing": ["Business Card", "Catalogue", "Collecting Data", "Competition", "Customer", "Display", "Entertainment Industry", "Interview", "Leadership", "Management", "Manufacture", "Marketing Strategies", "Mass Media", "Merchandise", "Newsletter", "Poll", "Products", "Profit Margin", "Questionnaire", "Recruitment", "Research Method", "Special Offer", "Statistic", "Survey", "Trainee", "Training", "TV Program"],
   
-  "Health":  ["Balanced Diet", "Beans", "Blackcurrant", "Bread", "Carbohydrates", "Cereals", "Cheese", "Citrus Fruits", "Disease", "Egg Yolk", "Eggs", "Food Pyramid", "Fruit", "Green Pepper", "Keep-Fit", "Leisure Time", "Liver", "Meal", "Meat", "Medicine Treatment", "Milk", "Minerals", "Nursery", "Nursing Care", "Nuts", "Outdoor Activities", "Pasta", "Pizza", "Potatoes", "Protein", "Regular Exercise", "Remedy", "Rice", "Salad Bar", "Seafood", "Tai-Chi", "Tomatoes", "Vegetables", "Vegetarian", "Vitamin", "Yoghurt", "Yoga", "Zinc"],
+  "Health": ["Balanced Diet", "Beans", "Blackcurrant", "Bread", "Carbohydrates", "Cereals", "Cheese", "Citrus Fruits", "Disease", "Egg Yolk", "Eggs", "Food Pyramid", "Fruit", "Green Pepper", "Keep-Fit", "Leisure Time", "Liver", "Meal", "Meat", "Medicine Treatment", "Milk", "Minerals", "Nursery", "Nursing Care", "Nuts", "Outdoor Activities", "Pasta", "Pizza", "Potatoes", "Protein", "Regular Exercise", "Remedy", "Rice", "Salad Bar", "Seafood", "Tai-Chi", "Tomatoes", "Vegetables", "Vegetarian", "Vitamin", "Yoghurt", "Yoga", "Zinc"],
   
   "Nature": ["Avalanche", "Canyon", "Catastrophe", "Cliff", "Coast", "Dam", "Desertification", "Disaster", "Earthquake", "Environment", "Erosion", "Field", "Flood", "Footbridge", "Forest", "Hill", "Hurricane", "Island", "Jungle", "Lake", "Landslides", "Mountain", "Oasis", "Peninsula", "Pond", "Reef", "River", "Storm", "Tornado", "Typhoon", "Valley", "Village", "Volcano", "Waterfall"],
   
@@ -34,7 +34,7 @@ const WORD_CATEGORIES:    Record<string, string[]> = {
   
   "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
   
-  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
+  "Homes": ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
   
   "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
   
@@ -76,7 +76,7 @@ const WORD_CATEGORIES:    Record<string, string[]> = {
   
   "Expressions and Time": ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
   
-  "Other": ["Activity", "Attitude", "Burger", "Carriage", "Chocolate", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Encyclopedia", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Junior", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Satellite", "Senior", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
+  "Other":  ["Activity", "Attitude", "Burger", "Carriage", "Chocolate", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Encyclopedia", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Junior", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Satellite", "Senior", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
 };
 
 interface CategoryStats {
@@ -87,7 +87,15 @@ interface CategoryStats {
   completed: boolean;
 }
 
-const IELTSListeningPractice: React.FC = () => {
+const SPEED_OPTIONS = [
+  { value: 0.5, label: '0.5x (Very Slow)' },
+  { value: 0.75, label: '0.75x (Slow)' },
+  { value: 0.9, label: '0.9x (Normal)' },
+  { value: 1.0, label: '1.0x (Fast)' },
+  { value: 1.25, label: '1.25x (Very Fast)' },
+];
+
+const IELTSListeningPractice:  React.FC = () => {
   const [words, setWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -102,8 +110,13 @@ const IELTSListeningPractice: React.FC = () => {
   const [selectedVoice, setSelectedVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [categoryStats, setCategoryStats] = useState<Record<string, CategoryStats>>({});
+  const [playbackSpeed, setPlaybackSpeed] = useState(0.9);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [pendingCategory, setPendingCategory] = useState<string | null>(null);
   
   const inputRef = useRef<HTMLInputElement>(null);
+  const speedMenuRef = useRef<HTMLDivElement>(null);
 
   const totalAvailableWords = useMemo(() => 
     Object.values(WORD_CATEGORIES).flat().length, 
@@ -111,14 +124,14 @@ const IELTSListeningPractice: React.FC = () => {
   );
 
   const progressPercent = useMemo(() => 
-    words.length ?   ((currentIndex + 1) / words.length) * 100 : 0,
-    [currentIndex, words. length]
+    words.length ?     ((currentIndex + 1) / words.length) * 100 : 0,
+    [currentIndex, words.length]
   );
 
-  // Load data from localStorage
   useEffect(() => {
     const savedMistakes = localStorage.getItem('ielts_mistakes');
     const savedStats = localStorage.getItem('ielts_category_stats');
+    const savedSpeed = localStorage.getItem('playback_speed');
     
     if (savedMistakes) {
       try {
@@ -135,39 +148,50 @@ const IELTSListeningPractice: React.FC = () => {
         console.warn('Failed to load saved stats:', error);
       }
     }
+    
+    if (savedSpeed) {
+      setPlaybackSpeed(parseFloat(savedSpeed));
+    }
   }, []);
 
-  // Save data to localStorage
   useEffect(() => {
-    localStorage. setItem('ielts_mistakes', JSON.stringify(mistakeWords));
+    localStorage.setItem('ielts_mistakes', JSON.stringify(mistakeWords));
   }, [mistakeWords]);
 
   useEffect(() => {
     localStorage.setItem('ielts_category_stats', JSON.stringify(categoryStats));
   }, [categoryStats]);
 
-  // Load ONLY UK voices
+  useEffect(() => {
+    localStorage.setItem('playback_speed', playbackSpeed.toString());
+  }, [playbackSpeed]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (speedMenuRef.current && !speedMenuRef.current.contains(event. target as Node)) {
+        setShowSpeedMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   useEffect(() => {
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
       
-      // Filter for UK voices only (en-GB)
       const ukOnly = availableVoices.filter(v => v.lang === 'en-GB');
       setUkVoices(ukOnly);
       
-      // Select best UK voice automatically
       const bestUkVoice = 
-        // Priority 1: Google UK voices (best quality)
-        ukOnly.find(v => v.name. includes('Google') && v.name.includes('UK')) ||
-        ukOnly.find(v => v. name.includes('Google')) ||
-        // Priority 2: Microsoft UK voices
-        ukOnly.find(v => v.name.includes('Microsoft') || v.name.  includes('Hazel') || v.name.includes('Daniel')) ||
-        // Priority 3: Any UK voice
+        ukOnly.find(v => v.name.includes('Google') && v.name.includes('UK')) ||
+        ukOnly. find(v => v.name. includes('Google')) ||
+        ukOnly.find(v => v.name.includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) ||
         ukOnly[0];
       
       setSelectedVoice(prev => prev || bestUkVoice || null);
       
-      // Save selected voice
       const savedVoiceName = localStorage.getItem('selected_uk_voice');
       if (savedVoiceName) {
         const savedVoice = ukOnly.find(v => v.name === savedVoiceName);
@@ -183,7 +207,6 @@ const IELTSListeningPractice: React.FC = () => {
     };
   }, []);
 
-  // Save voice preference
   useEffect(() => {
     if (selectedVoice) {
       localStorage.setItem('selected_uk_voice', selectedVoice.name);
@@ -206,12 +229,11 @@ const IELTSListeningPractice: React.FC = () => {
         
         const utterance = new SpeechSynthesisUtterance(text);
         
-        // Use selected UK voice
         if (selectedVoice) {
           utterance.voice = selectedVoice;
         }
         
-        utterance.rate = 0.9;  // Slightly slower for clarity
+        utterance.rate = playbackSpeed;
         utterance.pitch = 1;
         utterance.volume = 1;
         
@@ -227,16 +249,48 @@ const IELTSListeningPractice: React.FC = () => {
 
     if (window.speechSynthesis.speaking) {
       if (! isPaused) {
-        window.speechSynthesis. pause();
+        window.speechSynthesis.pause();
         setIsPaused(true);
       } else {
-        window.speechSynthesis.resume();
+        window.speechSynthesis. resume();
         setIsPaused(false);
       }
     } else {
       speak(words[currentIndex]);
       setIsPaused(false);
     }
+  };
+
+  const handleSpeedChange = (speed: number) => {
+    setPlaybackSpeed(speed);
+    setShowSpeedMenu(false);
+    speak("Speed changed");
+  };
+
+  const handleCategoryClick = (category: string) => {
+    const stats = categoryStats[category];
+    const mistakeCount = getCategoryMistakeCount(category);
+    
+    // If category is completed AND has mistakes, show modal
+    if (stats?. completed && mistakeCount > 0) {
+      setPendingCategory(category);
+      setShowCategoryModal(true);
+    } else {
+      // Otherwise, start test directly
+      startTest(category, 'normal');
+    }
+  };
+
+  const handleModalChoice = (mode: 'mistakes' | 'full') => {
+    if (pendingCategory) {
+      if (mode === 'mistakes') {
+        startTest(pendingCategory, 'mistakes');
+      } else {
+        startTest(pendingCategory, 'normal');
+      }
+    }
+    setShowCategoryModal(false);
+    setPendingCategory(null);
   };
 
   const startTest = (category: string | null = null, mode: 'normal' | 'mistakes' = 'normal') => {
@@ -253,7 +307,7 @@ const IELTSListeningPractice: React.FC = () => {
         categoryName = 'All Mistakes';
       }
     } else if (category) {
-      wordList = WORD_CATEGORIES[category] ?  [... WORD_CATEGORIES[category]] : [];
+      wordList = WORD_CATEGORIES[category] ?  [...WORD_CATEGORIES[category]] : [];
       categoryName = category;
     } else {
       wordList = Object.values(WORD_CATEGORIES).flat();
@@ -283,9 +337,9 @@ const IELTSListeningPractice: React.FC = () => {
     
     setCategoryStats(prev => ({
       ...prev,
-      [category]:  {
+      [category]: {
         answered: total,
-        correct: correct,
+        correct:  correct,
         mistakes: total - correct,
         percentage: percentage,
         completed: true
@@ -313,7 +367,7 @@ const IELTSListeningPractice: React.FC = () => {
       if (! mistakeWords.includes(words[currentIndex])) {
         setMistakeWords(prev => [...prev, words[currentIndex]]);
       }
-      speak(`Incorrect.  The correct spelling is ${words[currentIndex]}`);
+      speak(`Incorrect. The correct spelling is ${words[currentIndex]}`);
     } else {
       if (mistakeWords.includes(words[currentIndex])) {
         setMistakeWords(prev => prev. filter(w => w !== words[currentIndex]));
@@ -381,7 +435,7 @@ const IELTSListeningPractice: React.FC = () => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e. key === 'Enter' && isPlaying && !isPaused) {
+    if (e.key === 'Enter' && isPlaying && !isPaused) {
       if (showResult) {
         if (! isCorrect) {
           nextWord();
@@ -398,10 +452,10 @@ const IELTSListeningPractice: React.FC = () => {
     
     if (voice) {
       setSelectedVoice(voice);
-      // Test the voice
       try {
         const utterance = new SpeechSynthesisUtterance("Voice selected");
         utterance.voice = voice;
+        utterance.rate = playbackSpeed;
         window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
       } catch (error) {
@@ -413,6 +467,106 @@ const IELTSListeningPractice: React.FC = () => {
   const getCategoryMistakeCount = (category: string): number => {
     const categoryWords = WORD_CATEGORIES[category] || [];
     return mistakeWords.filter(word => categoryWords.includes(word)).length;
+  };
+
+  const SpeedControl = () => (
+    <div className="relative" ref={speedMenuRef}>
+      <button
+        onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+        className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-purple-300 rounded-lg hover:bg-purple-50 transition-colors"
+        title="Playback Speed"
+      >
+        <Gauge size={20} className="text-purple-600" />
+        <span className="text-sm font-medium text-gray-700">{playbackSpeed}x</span>
+      </button>
+      
+      {showSpeedMenu && (
+        <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-purple-200 py-2 z-50 min-w-[180px]">
+          <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-gray-200 mb-1">
+            Playback Speed
+          </div>
+          {SPEED_OPTIONS.map(option => (
+            <button
+              key={option.value}
+              onClick={() => handleSpeedChange(option.value)}
+              className={`w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors flex items-center justify-between ${
+                playbackSpeed === option. value ?  'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-700'
+              }`}
+            >
+              <span>{option.label}</span>
+              {playbackSpeed === option.value && (
+                <CheckCircle size={16} className="text-purple-600" />
+              )}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // Category Choice Modal
+  const CategoryModal = () => {
+    if (! showCategoryModal || !pendingCategory) return null;
+    
+    const stats = categoryStats[pendingCategory];
+    const mistakeCount = getCategoryMistakeCount(pendingCategory);
+    
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in fade-in duration-300">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-2xl font-bold text-gray-800">{pendingCategory}</h3>
+            <button
+              onClick={() => {
+                setShowCategoryModal(false);
+                setPendingCategory(null);
+              }}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
+          
+          <div className="mb-6">
+            <div className="bg-green-50 rounded-lg p-4 mb-4">
+              <div className="text-sm text-gray-600 mb-1">Last Score</div>
+              <div className="text-3xl font-bold text-green-600">
+                {stats?.percentage}%
+              </div>
+              <div className="text-sm text-gray-600 mt-1">
+                {stats?.correct}/{stats?.answered} correct
+              </div>
+            </div>
+            
+            {mistakeCount > 0 && (
+              <div className="bg-red-50 rounded-lg p-4">
+                <div className="text-sm text-red-600 font-medium">
+                  You have {mistakeCount} mistake{mistakeCount > 1 ? 's' : ''} to review
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <div className="space-y-3">
+            <button
+              onClick={() => handleModalChoice('mistakes')}
+              className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <AlertCircle size={24} />
+              Review {mistakeCount} Mistake{mistakeCount > 1 ? 's' : ''}
+            </button>
+            
+            <button
+              onClick={() => handleModalChoice('full')}
+              className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Play size={24} />
+              Take Full Test Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const renderCategoryGrid = () => (
@@ -428,7 +582,7 @@ const IELTSListeningPractice: React.FC = () => {
       {mistakeWords.length > 0 && (
         <button
           onClick={() => startTest(null, 'mistakes')}
-          className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover: shadow-xl hover:scale-105 transition-all text-left flex flex-col justify-between h-32"
+          className="bg-gradient-to-r from-red-500 to-pink-600 text-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all text-left flex flex-col justify-between h-32"
         >
           <span className="text-2xl font-bold"><AlertCircle className="inline mr-2"/> Review Mistakes</span>
           <span className="opacity-80 text-sm">{mistakeWords.length} words to fix</span>
@@ -438,12 +592,12 @@ const IELTSListeningPractice: React.FC = () => {
       {Object.keys(WORD_CATEGORIES).map((cat) => {
         const stats = categoryStats[cat];
         const mistakeCount = getCategoryMistakeCount(cat);
-        const isCompleted = stats?. completed;
+        const isCompleted = stats?.completed;
         
         return (
           <div key={cat} className="relative">
             <button
-              onClick={() => startTest(cat, 'normal')}
+              onClick={() => handleCategoryClick(cat)}
               className={`w-full p-6 rounded-xl hover:shadow-md transition-all text-left flex flex-col justify-between h-32 group ${
                 isCompleted 
                   ? 'bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300' 
@@ -471,13 +625,12 @@ const IELTSListeningPractice: React.FC = () => {
             </button>
             
             {mistakeCount > 0 && (
-              <button
-                onClick={() => startTest(cat, 'mistakes')}
-                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-lg hover:bg-red-600 transition-all hover:scale-110"
-                title="Review mistakes in this category"
+              <div
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-lg"
+                title={`${mistakeCount} mistakes`}
               >
                 {mistakeCount}
-              </button>
+              </div>
             )}
           </div>
         );
@@ -487,7 +640,7 @@ const IELTSListeningPractice: React.FC = () => {
 
   const renderResultsScreen = () => {
     const finalCorrect = score.correct;
-    const finalTotal = score. total;
+    const finalTotal = score.total;
     const finalMistakes = finalTotal - finalCorrect;
     const percentage = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
     
@@ -545,7 +698,7 @@ const IELTSListeningPractice: React.FC = () => {
               const cleanCategory = selectedCategory?. replace(' - Mistakes', '').replace('All Mistakes', '');
               startTest(cleanCategory || null, 'normal');
             }}
-            className="flex-1 bg-white border-2 border-purple-500 text-purple-600 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-all flex items-center justify-center gap-2"
+            className="flex-1 bg-white border-2 border-purple-500 text-purple-600 py-4 rounded-xl font-bold text-lg hover: bg-purple-50 transition-all flex items-center justify-center gap-2"
           >
             <RotateCcw size={24} />
             Try Again
@@ -557,6 +710,8 @@ const IELTSListeningPractice: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-8 font-sans">
+      <CategoryModal />
+      
       <div className="max-w-4xl mx-auto">
         <header className="mb-8 text-center">
           <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-2">
@@ -569,9 +724,12 @@ const IELTSListeningPractice: React.FC = () => {
           
           {! isPlaying && ! showResults && (
             <div className="bg-purple-50 p-4 border-b border-purple-100">
-              <div className="flex items-center gap-2 text-purple-800 font-medium mb-4">
-                <Settings size={20} />
-                <span>Voice Settings (UK English Only 🇬🇧)</span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2 text-purple-800 font-medium">
+                  <Settings size={20} />
+                  <span>Voice Settings (UK English Only 🇬🇧)</span>
+                </div>
+                <SpeedControl />
               </div>
               
               {ukVoices.length > 0 ?  (
@@ -584,7 +742,7 @@ const IELTSListeningPractice: React.FC = () => {
                     onChange={handleVoiceChange}
                     className="w-full p-2 border border-gray-300 rounded text-sm mb-2"
                   >
-                    {ukVoices.map(v => (
+                    {ukVoices. map(v => (
                       <option key={v.name} value={v.name}>
                         {v.name}
                       </option>
@@ -597,16 +755,16 @@ const IELTSListeningPractice: React.FC = () => {
                     🔊 Test Voice
                   </button>
                   <p className="text-xs text-gray-500 mt-2">
-                    Currently using: <strong>{selectedVoice?.name || 'None'}</strong>
+                    Currently using:  <strong>{selectedVoice?.name || 'None'}</strong>
                   </p>
                 </div>
               ) : (
                 <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                   <p className="text-sm text-yellow-800 mb-2">
-                    ⚠️ No British English (en-GB) voices found on your system. 
+                    ⚠️ No British English (en-GB) voices found on your system.  
                   </p>
                   <p className="text-xs text-gray-600">
-                    <strong>Tip:</strong> For best results, use: 
+                    <strong>Tip:</strong> For best results, use:  
                   </p>
                   <ul className="text-xs text-gray-600 list-disc list-inside mt-1">
                     <li><strong>Chrome/Edge:</strong> Voices load automatically</li>
@@ -647,7 +805,10 @@ const IELTSListeningPractice: React.FC = () => {
 
                 <div className="flex justify-between items-center mb-8 text-sm text-gray-500">
                    <span>Category: <strong className="text-purple-600">{selectedCategory}</strong></span>
-                   <span>Progress: <strong>{currentIndex + 1}/{words.length}</strong></span>
+                   <div className="flex items-center gap-4">
+                     <SpeedControl />
+                     <span>Progress: <strong>{currentIndex + 1}/{words.length}</strong></span>
+                   </div>
                 </div>
 
                 <div className="text-center mb-8">
@@ -671,7 +832,7 @@ const IELTSListeningPractice: React.FC = () => {
                     disabled={showResult || isPaused}
                     className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${
                       showResult 
-                        ? isCorrect ?  'border-green-500 text-green-700' : 'border-red-500 text-red-700'
+                        ? isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700'
                         : 'border-gray-300 focus:border-purple-500 text-gray-800'
                     }`}
                     placeholder="Type here..."
@@ -707,11 +868,11 @@ const IELTSListeningPractice: React.FC = () => {
                 </div>
 
                 <div className="flex gap-4">
-                  {! showResult ?  (
+                  {!showResult ?  (
                     <>
                       <button
                         onClick={checkAnswer}
-                        disabled={! userInput. trim()}
+                        disabled={! userInput.trim()}
                         className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-700 shadow-lg disabled:bg-gray-300 disabled:shadow-none transition-all transform hover:-translate-y-1"
                       >
                         Check Answer
