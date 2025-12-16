@@ -2,45 +2,100 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Volume2, Play, Pause, SkipForward, CheckCircle, XCircle, AlertCircle, Settings, BookOpen, Trophy, RotateCcw, Home, Gauge, X, ChevronDown, TrendingUp, Target, Award } from 'lucide-react';
 import './App.css';
 
-const WORD_CATEGORIES:  Record<string, string[]> = {
-  "Days of the Week": ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Weekdays", "Weekend"],
-  "Months of the Year": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  "Money Matters": ["Annual Fee", "Annuity", "Bank Statement", "Budget Deficit", "Cash", "Cheque", "Counterfeit Money", "Coupon", "Credit Card", "Current Account", "Debit", "Debt", "Deposit", "Distribution Costs", "Duty-Free Store", "Family Finances", "Finance Department", "Grace Period", "In Advance", "Income", "Interest Rate", "Interest-Free Credit", "Low-Risk Investment", "Mastercard", "Money Management", "Monthly Membership", "Mortgage", "Non-Refundable", "Partial Refund", "Poverty", "Public Money", "Purchase", "Retail Voucher", "Student Account", "Taxpayers' Money", "Tuition Fees", "VISA", "Withdraw"],
-  "Subjects": ["Agriculture", "Anthropology", "Archaeology", "Architecture", "Biology", "Business Management", "Chemistry", "Economics", "Geography", "History", "Humanities", "Law", "Literature", "Logic", "Mathematics", "Performing Arts", "Philosophy", "Physics", "Politics", "Psychology", "Science", "Statistics", "Visual Arts"],
-  "Studying At College/University": ["Accommodation", "Advanced", "Assessment", "Attendance", "Bachelor's Degree", "Certificate", "Classroom", "College", "Commencement", "Compound", "Computer Centre", "Computer Laboratory", "Course Outline", "Deadline", "Department", "Dictionary", "Dining Room", "Diploma", "Dissertation", "Experiment", "Experience", "Extra Background", "Facilities", "Faculty", "Feedback", "Foreign Students", "Full-Time", "Give a Talk", "Group Discussion", "Guidelines", "Handout", "Higher Education", "Home Stay", "Intermediate", "International", "Introductory", "Knowledge", "Laptop", "Leaflet", "Lecture", "Library", "Main Hall", "Media Room", "Module", "Outcomes", "Overseas Students", "Pencil", "Placement Test", "Post-Secondary", "Primary", "Printer", "Proofreading", "Publication", "Pupils", "Reference", "Registrar's Office", "Report Writing", "Research", "Resources Room", "Schedule", "School Reunion", "Secondary", "Specialist", "Speech", "Staff", "Stationery", "Student Advisor", "Student Retention", "Student Support Services", "Supervisor", "Tasks", "Teamwork", "Textbook", "Topic", "Tutor", "Vocabulary", "University", "Written Work"],
-  "Marketing": ["Business Card", "Catalogue", "Collecting Data", "Competition", "Customer", "Display", "Entertainment Industry", "Interview", "Leadership", "Management", "Manufacture", "Marketing Strategies", "Mass Media", "Merchandise", "Newsletter", "Poll", "Products", "Profit Margin", "Questionnaire", "Recruitment", "Research Method", "Special Offer", "Statistic", "Survey", "Trainee", "Training", "TV Program"],
-  "Health": ["Balanced Diet", "Beans", "Blackcurrant", "Bread", "Carbohydrates", "Cereals", "Cheese", "Citrus Fruits", "Disease", "Egg Yolk", "Eggs", "Food Pyramid", "Fruit", "Green Pepper", "Keep-Fit", "Leisure Time", "Liver", "Meal", "Meat", "Medicine Treatment", "Milk", "Minerals", "Nursery", "Nursing Care", "Nuts", "Outdoor Activities", "Pasta", "Pizza", "Potatoes", "Protein", "Regular Exercise", "Remedy", "Rice", "Salad Bar", "Seafood", "Tai-Chi", "Tomatoes", "Vegetables", "Vegetarian", "Vitamin", "Yoghurt", "Yoga", "Zinc"],
-  "Nature": ["Avalanche", "Canyon", "Catastrophe", "Cliff", "Coast", "Dam", "Desertification", "Disaster", "Earthquake", "Environment", "Erosion", "Field", "Flood", "Footbridge", "Forest", "Hill", "Hurricane", "Island", "Jungle", "Lake", "Landslides", "Mountain", "Oasis", "Peninsula", "Pond", "Reef", "River", "Storm", "Tornado", "Typhoon", "Valley", "Village", "Volcano", "Waterfall"],
-  "The Environment": ["Acid Rain", "Burning Fossil", "Carbon Dioxide", "Cattle", "Chemical-Free", "Climate", "Coal", "Contaminated", "Deforestation", "Degradation", "Desert", "Drought", "Environmentally Friendly", "Exhaust Fumes", "Firewood", "Fossil Fuels", "Global Warming", "Greenhouse Effect", "Hydroelectric Power", "Landfill", "Nitrogen Oxide", "Ocean Currents", "Oxygen", "Pollution", "Power Plants", "Reliable", "Renewable", "Sea Level", "Smog", "Soar Power", "Soil Conditioner", "Solar Panels", "Source Of Energy", "Temperature", "Vegetation", "Wind Turbine"],
-  "The Animal Kingdom": ["Amphibian", "Birds of Prey", "Cetacean", "Class", "Creature", "Family", "Fish", "Genus", "Insects", "Lion", "Livestock", "Mammals", "Octopus", "Order", "Penguin", "Phylum", "Poultry and Game", "Primates", "Reptile", "Rodents", "Seabirds", "Species", "Whale"],
-  "Plants": ["Bark", "Branch", "Cluster", "Core", "Fertilizer", "Flower", "Fungus", "Leaves", "Mushroom", "Roots", "Seed", "Stem", "Trunk", "Twig"],
-  "Continents": ["Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"],
-  "Countries": ["Brazil", "China", "Denmark", "Egypt", "England", "France", "Germany", "Greece", "India", "Indonesia", "Italy", "Malaysia", "Mexico", "New Zealand", "Nigeria", "North Korea", "Pakistan", "Singapore", "Switzerland", "The Dominican Republic", "The Philippines", "Turkey", "United Kingdom"],
-  "Languages": ["Bengali", "Bilingual", "Chinese", "Filipino", "French", "German", "Greek", "Hindi", "Italian", "Japanese", "Linguistics", "Mandarin", "Persian", "Polyglot", "Portuguese", "Punjabi", "Russian", "Thai", "Trilingual"],
-  "Architecture and Buildings": ["Castle", "Dome", "Fort", "Glasshouse", "Hut", "Lighthouse", "Log Cabin", "Palace", "Pyramid", "Sculpture", "Skyscraper"],
-  "Homes":  ["Apartment Building", "Basement", "Bedroom", "Block of Flats", "Bungalow", "Chimney", "Coffee Table", "Condominium", "Dormitory", "Duplex", "Ground Floor", "Hallway", "Houseboat", "Insurance", "Kitchen", "Landlord", "Lease", "Microwave", "Mobile Home", "Neighborhood", "Oven", "Refrigerator", "Rent", "Row House", "Semi-Detached House", "Sofa", "Storey", "Suburb", "Tenant", "Terraced House", "Thatched Cottage", "Town House"],
-  "In The City": ["Avenue", "Bridge", "Car Park", "Central Station", "Cities", "City Centre", "Department Store", "Embassy", "Garden", "Hospital", "Lane", "Road System", "Street", "Temple"],
-  "Workplaces": ["Ability", "Appointment", "Clinic", "Colleague", "Confidence", "Dentist", "Employee", "Employer", "Employment", "Information Desk", "Internship", "Reception", "Showroom", "Staff Selection", "Stress", "Team Leaders", "Technical Cooperation", "Unemployed", "Vision", "Workshop"],
-  "Rating and Qualities": ["Cheap", "Colored", "Dangerous", "Disappointed", "Efficient", "Expensive", "Luxurious", "Poor Quality", "Reasonable", "Safe", "Satisfactory", "Satisfied", "Spotted", "Striped", "Strongly Recommended"],
-  "Touring":  ["Aquarium", "Culture", "Guest", "Hostel", "Memorable", "Picnic", "Reservation", "Single Double-Bedded Room", "Souvenir", "Suite", "Ticket Office", "Tourist Attraction", "Tourist Guided Tour", "Trip", "View"],
-  "Verbs": ["Arrange", "Borrow", "Collect", "Concentrate", "Develop", "Discuss", "Donate", "Edit", "Exhibit", "Hunt", "Immigrate", "Learn", "Mark", "Persuade", "Register", "Review", "Revise", "Suggest", "Supervise", "Support", "Surpass", "Touch", "Train"],
-  "Adjectives": ["Affordable", "Ancient", "Comfortable", "Compulsory", "Confident", "Convenient", "Dull", "Energetic", "Exciting", "Extinct", "Fabulous", "Fantastic", "Flexible", "Immense", "Intact", "Intensive", "Knowledgeable", "Mandatory", "Necessary", "Optimistic", "Permanent", "Pessimistic", "Practical", "Realistic", "Salty", "Social", "Spectacular", "Suitable", "Temporary", "Tranquil", "Various", "Vast", "Voluntary", "Vulnerable", "Western"],
-  "Hobbies": ["Archery", "Billiards", "Bowls", "Caving", "Chess", "Climbing", "Darts", "Embroidery", "Gardening", "Golf", "Ice Skating", "Orienteering", "Painting", "Photography", "Pottery", "Scuba-Diving", "Skateboarding", "Snorkeling", "Spelunking", "Stamp Collection", "Woodcarving"],
-  "Sports": ["Abseiling", "American Football", "Athlete", "Badminton", "Barbell", "Baseball", "Basketball", "Bodyboarding", "Bungee Jumping", "Canoeing", "Championship", "Court", "Cricket", "Cycling", "Extreme Sports", "Field", "Gym", "Gymnasium", "Hang-Gliding", "Hockey", "Horse Racing", "Jet-Skiing", "Jogging", "Judo", "Kitesurfing", "Mountain Biking", "Paragliding", "Ping-Pong", "Pitch", "Polo", "Press-Up", "Push-Up", "Recreation", "Refreshment", "Rugby", "Show Jumping", "Skydiving", "Snooker", "Snowboarding", "Soccer", "Squash", "Stadium", "Surfing", "Swimming", "Team", "Tennis", "The Discus", "The Hammer", "The High Jump", "The Javelin", "Treadmill", "Walking", "White-Water Rafting", "Windsurfing"],
-  "Shapes": ["Circular", "Curved", "Cylindrical", "Oval", "Polygon", "Rectangular", "Spherical", "Spiral", "Square", "Triangular"],
-  "Measurement": ["Altitude", "Breadth", "Depth", "Frequency", "Height", "Imperial System", "Length", "Mass", "Metric System", "Three Dimensions", "Width"],
-  "Transportations": ["Airship", "Aircraft", "Airport", "Automobile", "Boat", "Cabin Cruiser", "Canal Boat", "Canoe", "Cargo Plane", "Container Ship", "Crew", "Dinghy Sailing", "Ferry", "Gondola", "Helicopter", "Hire A Car", "Hot-Air Balloon", "Hovercraft", "Hydrofoil", "Kayak", "Lifeboat", "Liner", "Narrowboat", "Paddle Steamer", "Passenger", "Platform", "Punt", "Rowboat", "Rowing Boat", "Sailboat", "Seaplane", "Transportations", "Shipment"],
-  "Vehicles": ["Breakdown Truck", "Cab", "Camper", "Caravan", "Coach", "Double-Decker Bus", "Forklift Truck", "Freight Train", "Goods Train", "Jeep", "Lorry", "Minibus", "Pickup", "School Bus", "Single-Decker", "Stream Train", "Subway", "Tanker", "Taxi", "Tow Truck", "Tractor", "Tram", "Transporter", "Truck", "Underground", "Vehicles", "Van"],
-  "Weather": ["Antenna", "Breeze", "Chilly", "Cold", "Cool", "Dry", "Dusty", "Freezing", "Hot", "Humid", "Moisture", "Sticky", "Warm", "Weather Forecast", "Wet"],
-  "Places": ["Accommodation", "Bookshop", "Cafe", "Cafeteria", "Canteen", "City Council", "Conversation Club", "Cottage", "Dance Studio", "Kindergarten", "Local Library", "Park", "Parliament", "Restaurant", "Sports Centre", "Swimming Pool"],
-  "Equipment And Tools": ["Backpack", "Breaks", "Cassette", "Device", "Digital Monitor", "Disk", "Equipment", "Gadget", "Helmet", "Light", "Mechanical Pencil", "Musical Instrument", "Screen", "Silicon Chip", "Wheels"],
-  "The Arts and Media": ["Art Gallery", "Audience", "Ballet", "Carnival", "Cinemas", "Classical Music", "Concert", "Conductor", "Exhibition", "Festival", "Graphics", "Museum", "Newspaper", "Opera", "Orchestra", "Radio", "Symphony", "Television", "The Press", "Theatre", "Vocalist"],
-  "Materials": ["Aluminum", "Bone", "Cement", "Ceramics", "Composite", "Concrete", "Copper", "Cotton", "Fabric", "Feather", "Fiberglass", "Fur", "Glass", "Glue", "Gold", "Leather", "Lumber/Wood", "Metal", "Paper", "Plastic", "Rubber", "Silver", "Steel", "Stone", "Textile", "Wax", "Wood", "Wool"],
-  "Works And Jobs": ["Accountant", "Architect", "Captain", "Cashier", "Clerk", "Craftsman", "Curriculum Vitae", "Decorator", "Designer", "Engineer", "Flight Attendant", "Freelance", "Guard", "Lecturer", "Mail Address", "Manager", "Occupation", "Office Assistant", "Pilot", "Profession", "Professor", "Psychologist", "Receptionist", "Secretary", "Specialist", "Teacher", "Vacancy", "Volunteer", "Waiter", "Waitress", "Work Experience"],
-  "Color": ["Black", "Blue", "Brown", "Green", "Grey", "Orange", "Pink", "Purple", "Red", "White", "Yellow"],
-  "Expressions and Time": ["A Gap Year", "Century", "Decade", "Fortnight", "Full-Time", "Midday", "Midnight", "Millennium", "Part-Time", "Three Times", "Three Times Per Week"],
-  "Other": ["Activity", "Attitude", "Burger", "Carriage", "Chocolate", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Encyclopedia", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Junior", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Satellite", "Senior", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
+// New hierarchical structure with parent categories
+const WORD_CATEGORIES_HIERARCHICAL:  Record<string, Record<string, string[]>> = {
+  "Time, Dates & Numbers": {
+    "Days":  ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    "Times": ["Weekdays", "Weekend", "Midday", "Midnight", "Fortnight", "Millennium", "Century", "Decade", "Gap Year"],
+    "Months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "Measurement": ["Altitude", "Breadth", "Depth", "Width", "Height", "Length", "Mass", "Frequency", "Volume", "Dimension", "Imperial System", "Metric System"],
+    "Geometry": ["Circular", "Curved", "Cylindrical", "Oval", "Polygon", "Rectangular", "Spherical", "Spiral", "Square", "Triangular", "Three Dimensions"]
+  },
+  
+  "Education & Academic Context": {
+    "University Life": ["Bachelor's Degree", "Diploma", "Certificate", "Dissertation", "Thesis", "Semester", "Module", "Course Outline", "Assessment", "Assignment", "Deadline", "Extension", "Graduation", "Commencement", "Alumni", "School Reunion", "Student Retention", "Placement Test", "Outcomes"],
+    "Study Terms": ["Advanced", "Attendance", "Classroom", "Compound", "Computer Laboratory", "Department", "Experiment", "Extra Background", "Feedback", "Give a Talk", "Group Discussion", "Guidelines", "Higher Education", "Intermediate", "Introductory", "Knowledge", "Media Room", "Post-Secondary", "Primary", "Printer", "Proofreading", "Report Writing", "Research", "Schedule", "Secondary", "Specialist", "Speech", "Stationery", "Student Advisor", "Student Support Services", "Tasks", "Topic", "Vocabulary", "Written Work"],
+    "People & Roles": ["Tutor", "Supervisor", "Advisor", "Lecturer", "Professor", "Registrar", "Faculty", "Staff", "Pupil", "Student", "Overseas Student", "Foreign Student", "International Student", "Freshman", "Senior", "Junior"],
+    "Facilities": ["Campus", "Library", "Laboratory", "Lecture Hall", "Main Hall", "Computer Centre", "Dining Room", "Canteen", "Cafeteria", "Accommodation", "Homestay", "Dormitory", "Resources Room"],
+    "Study Materials": ["Textbook", "Dictionary", "Handout", "Leaflet", "Questionnaire", "Survey", "Data", "Statistics", "Reference", "Bibliography", "Publication", "Encyclopedia", "Note-taking", "Pencil", "Laptop"],
+    "Subjects": ["Archaeology", "Architecture", "Biology", "Business Management", "Chemistry", "Economics", "Geography", "History", "Humanities", "Law", "Literature", "Logic", "Mathematics", "Performing Arts", "Philosophy", "Physics", "Politics", "Psychology", "Science", "Visual Arts", "Anthropology", "Agriculture"]
+  },
+  
+  "Money, Business & Marketing": {
+    "Banking & Finance": ["Bank Statement", "Current Account", "Deposit", "Withdraw", "Overdraft", "Debt", "Deficit", "Interest Rate", "Loan", "Mortgage", "Investment", "Income", "Budget", "Tax", "Dividend", "Currency", "Cash", "Cheque", "Credit Card", "Debit Card", "Annuity", "Money Management", "Counterfeit Money", "Family Finances", "Finance Department", "Grace Period", "In Advance", "Interest-Free Credit", "Low-Risk Investment", "Mastercard", "Monthly Membership", "Poverty", "Public Money", "Retail Voucher", "Student Account", "Taxpayers' Money", "VISA"],
+    "Shopping & Costs": ["Affordable", "Expensive", "Cheap", "Reasonable", "Refund", "Partial Refund", "Non-refundable", "Purchase", "Discount", "Special Offer", "Coupon", "Voucher", "Duty-Free", "Tuition Fees", "Annual Fee", "Distribution Costs"],
+    "Business & Management": ["Marketing Strategy", "Recruitment", "Leadership", "Management", "Profit Margin", "Merchandise", "Manufacture", "Interview", "Trainee", "Internship", "Employment", "Employer", "Employee", "Colleague", "Workforce", "Technical Cooperation", "Collecting Data", "Competition", "Entertainment Industry", "Products", "Research Method"],
+    "Marketing Tools": ["Business Card", "Newsletter", "Brochure", "Catalogue", "Display", "Poll", "Commercial", "Advertisement", "Mass Media", "Customer", "TV Program"]
+  },
+  
+  "Food, Dining & Nutrition": {
+    "Basic Foods": ["Water", "Juice", "Coffee", "Tea", "Soup", "Salad", "Sandwich", "Chicken", "Beef", "Pork", "Lamb", "Fish", "Sugar", "Salt", "Pepper", "Butter", "Oil", "Sauce", "Menu", "Chef", "Bread", "Rice", "Pasta", "Pizza", "Burger", "Cheese", "Yoghurt", "Egg", "Egg Yolk", "Egg White", "Meat", "Seafood", "Beans", "Nut", "Cereal", "Meal", "Salad Bar"],
+    "Fruits & Vegetables": ["Apple", "Banana", "Citrus Fruit", "Orange", "Lemon", "Blackcurrant", "Tomato", "Potato", "Green Pepper", "Onion", "Garlic", "Carrot", "Vegetable", "Fruit", "Corn", "Mushroom"],
+    "Diet & Nutrition": ["Balanced Diet", "Vegetarian", "Vegan", "Vitamin", "Mineral", "Zinc", "Calcium", "Calorie", "Fat", "Fiber", "Protein", "Carbohydrate", "Malnutrition", "Food Pyramid"],
+    "Dining Items": ["Beverage", "Refreshment", "Starter", "Main Course", "Dessert", "Snack", "Chocolate", "Takeaway"]
+  },
+  
+  "Health, Fitness & Body": {
+    "Medical":  ["Hospital", "Clinic", "Dentistry", "Medicine", "Treatment", "Remedy", "Cure", "Disease", "Illness", "Symptom", "Infection", "Virus", "Bacteria", "Surgery", "Pharmacy", "Nursing Care", "Stress", "Nursery"],
+    "Fitness": ["Exercise", "Yoga", "Tai-Chi", "Jogging", "Running", "Gym", "Workout", "Stamina", "Strength", "Keep-Fit", "Outdoor Activities", "Leisure Time", "Regular Exercise"],
+    "Body":  ["Heart", "Lung", "Liver", "Muscle", "Bone", "Blood", "Skin", "Brain", "Vision"]
+  },
+  
+  "Nature, Environment & Weather": {
+    "Disasters & Weather": ["Earthquake", "Flood", "Drought", "Hurricane", "Tornado", "Typhoon", "Storm", "Avalanche", "Landslide", "Volcanic Eruption", "Disaster", "Catastrophe", "Humidity", "Moisture", "Breeze", "Wind", "Lightning", "Thunder", "Temperature", "Freezing", "Chilly", "Hot", "Dry", "Wet", "Dusty", "Weather Forecast", "Cold", "Cool", "Sticky", "Warm"],
+    "Landscape": ["Mountain", "Hill", "Valley", "Cliff", "Canyon", "Desert", "Oasis", "Forest", "Jungle", "Island", "Peninsula", "Coast", "Beach", "Reef", "Lake", "River", "Pond", "Waterfall", "Dam", "Field", "Footbridge"],
+    "Environmental Issues": ["Pollution", "Contamination", "Acid Rain", "Global Warming", "Greenhouse Effect", "Deforestation", "Erosion", "Desertification", "Exhaust Fumes", "Carbon Dioxide", "Waste", "Landfill", "Smog", "Burning Fossil", "Chemical-Free", "Climate", "Degradation", "Environmentally Friendly", "Nitrogen Oxide", "Ocean Currents", "Oxygen", "Sea Level", "Soil Conditioner"],
+    "Energy": ["Fossil Fuel", "Coal", "Oil", "Gas", "Firewood", "Solar Power", "Wind Turbine", "Hydroelectric", "Renewable", "Power Plant", "Source of Energy", "Solar Panels"],
+    "Animals": ["Mammal", "Reptile", "Bird", "Bird of Prey", "Insect", "Rodent", "Primate", "Livestock", "Poultry", "Whale", "Penguin", "Lion", "Species", "Extinct", "Genus", "Phylum", "Cetacean", "Class", "Creature", "Family", "Order", "Seabirds"],
+    "Plants": ["Tree", "Trunk", "Branch", "Twig", "Leaf", "Root", "Stem", "Bark", "Flower", "Seed", "Vegetation", "Fungus", "Mushroom", "Fertilizer", "Soil", "Cluster", "Core", "Leaves"]
+  },
+  
+  "Travel, Transportation & Places": {
+    "Land Transport": ["Car", "Automobile", "Taxi", "Cab", "Bus", "School Bus", "Double-Decker Bus", "Minibus", "Single-Decker", "Coach", "Truck", "Lorry", "Tow Truck", "Forklift", "Breakdown Truck", "Van", "Tram", "Train", "Freight Train", "Goods Train", "Steam Train", "Subway", "Underground", "Tractor", "Jeep", "Camper", "Hire A Car", "Pickup", "Tanker", "Transporter"],
+    "Water Transport": ["Ship", "Boat", "Ferry", "Hovercraft", "Hydrofoil", "Liner", "Canoe", "Kayak", "Dinghy", "Canal Boat", "Rowboat", "Paddle Steamer", "Cabin Cruiser", "Container Ship", "Gondola", "Lifeboat", "Narrowboat", "Punt", "Sailboat", "Shipment"],
+    "Air Transport": ["Airplane", "Aircraft", "Helicopter", "Hot-Air Balloon", "Airship", "Seaplane", "Cargo Plane"],
+    "Travel Terms": ["Passenger", "Crew", "Pilot", "Driver", "Ticket", "Reservation", "Visa", "Luggage", "Terminal", "Platform", "Harbour", "Airport", "Station", "View", "Souvenir", "Tourist Attraction", "Guided Tour", "Expedition", "Aquarium", "Culture", "Guest", "Memorable", "Picnic", "Single Room", "Double-Bedded Room", "Ticket Office", "Trip"],
+    "Geography & Places": ["Continent", "Country", "City", "Capital", "Village", "Suburb", "Region", "Map", "Avenue", "Bridge", "Car Park", "Central Station", "City Centre", "Department Store", "Embassy", "Garden", "Lane", "Road System", "Street", "Temple", "Bookshop", "Cafe", "City Council", "Conversation Club", "Dance Studio", "Kindergarten", "Local Library", "Park", "Parliament", "Restaurant", "Sports Centre", "Swimming Pool"],
+    "Continents": ["Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"],
+    "Countries": ["UK", "USA", "New Zealand", "Bangladesh", "China", "France", "Germany", "Italy", "Brazil", "Egypt", "Switzerland", "Turkey", "Malaysia", "Denmark", "Greece", "India", "Indonesia", "Mexico", "Nigeria", "North Korea", "Pakistan", "Singapore", "The Dominican Republic", "The Philippines"],
+    "Languages": ["English", "Bengali", "Chinese", "Mandarin", "French", "German", "Spanish", "Japanese", "Russian", "Arabic", "Hindi", "Portuguese", "Thai", "Greek", "Bilingual", "Filipino", "Italian", "Linguistics", "Persian", "Polyglot", "Punjabi", "Trilingual"]
+  },
+  
+  "Housing, Architecture & Materials": {
+    "Types of Homes": ["House", "Apartment", "Flat", "Bungalow", "Cottage", "Castle", "Palace", "Skyscraper", "Condominium", "Duplex", "Hut", "Log Cabin", "Fortress", "Dome", "Igloo", "Row House", "Terraced House", "Block of Flats", "Houseboat", "Mobile Home", "Semi-Detached House", "Storey", "Thatched Cottage", "Town House"],
+    "Parts of a Building & Home Items": ["Roof", "Ceiling", "Wall", "Floor", "Window", "Door", "Balcony", "Basement", "Attic", "Garage", "Kitchen", "Bathroom", "Bedroom", "Living Room", "Hallway", "Chimney", "Fence", "Gate", "Ground Floor", "Coffee Table", "Microwave", "Oven", "Refrigerator", "Sofa"],
+    "Architecture": ["Fort", "Glasshouse", "Lighthouse", "Pyramid"],
+    "Materials": ["Wood", "Stone", "Brick", "Concrete", "Cement", "Steel", "Metal", "Copper", "Aluminum", "Gold", "Silver", "Glass", "Plastic", "Rubber", "Fabric", "Cotton", "Wool", "Leather", "Ceramic", "Wax", "Paper", "Fiberglass", "Composite", "Textile", "Feather", "Fur", "Glue"],
+    "Rental":  ["Tenant", "Landlord", "Lease", "Rent", "Insurance", "Neighborhood"]
+  },
+  
+  "Hobbies, Sports & Arts": {
+    "Sports": ["Football", "Soccer", "Cricket", "Tennis", "Badminton", "Rugby", "Hockey", "Basketball", "Baseball", "Golf", "Swimming", "Diving", "Surfing", "Skiing", "Snowboarding", "Cycling", "Athletics", "Judo", "Archery", "Squash", "Table Tennis", "Ping-Pong", "Abseiling", "American Football", "Athlete", "Barbell", "Bodyboarding", "Bungee Jumping", "Championship", "Court", "Extreme Sports", "Gymnasium", "Hang-Gliding", "Horse Racing", "Jet-Skiing", "Kitesurfing", "Mountain Biking", "Paragliding", "Pitch", "Polo", "Press-Up", "Push-Up", "Recreation", "Show Jumping", "Skydiving", "Snooker", "Stadium", "Team", "The Discus", "The Hammer", "The High Jump", "The Javelin", "Treadmill", "Walking", "White-Water Rafting", "Windsurfing"],
+    "Hobbies": ["Photography", "Painting", "Gardening", "Collecting", "Stamps", "Chess", "Hiking", "Camping", "Pottery", "Woodcarving", "Embroidery", "Orienteering", "Billiards", "Bowls", "Caving", "Climbing", "Darts", "Ice Skating", "Scuba-Diving", "Skateboarding", "Snorkeling", "Spelunking"],
+    "Arts & Media": ["Music", "Concert", "Orchestra", "Band", "Vocalist", "Instrument", "Opera", "Theatre", "Cinema", "Art Gallery", "Museum", "Exhibition", "Sculpture", "Newspaper", "Radio", "Television", "Graphics", "Audience", "Ballet", "Carnival", "Classical Music", "Conductor", "Festival", "Symphony", "The Press"]
+  },
+  
+  "Works, Jobs & Professions": {
+    "Professions": ["Accountant", "Architect", "Engineer", "Doctor", "Dentist", "Teacher", "Professor", "Manager", "Secretary", "Receptionist", "Assistant", "Clerk", "Cashier", "Waiter", "Waitress", "Pilot", "Flight Attendant", "Guard", "Designer", "Decorator", "Psychologist", "Specialist", "Captain", "Craftsman", "Team Leader", "Office Assistant"],
+    "Work Concepts": ["CV", "Curriculum Vitae", "Qualification", "Experience", "Skill", "Training", "Occupation", "Profession", "Vacancy", "Freelance", "Volunteer", "Staff Selection", "Workshop", "Teamwork", "Ability", "Appointment", "Confidence", "Information Desk", "Showroom", "Technical Cooperation", "Unemployed", "Vision", "Mail Address", "Work Experience"]
+  },
+  
+  "Descriptive Words, General Concepts & Others": {
+    "Devices & Tools": ["Backpack", "Breaks", "Cassette", "Device", "Digital Monitor", "Disk", "Gadget", "Helmet", "Light", "Mechanical Pencil", "Musical Instrument", "Screen", "Silicon Chip", "Wheels", "Antenna"],
+    "Adjectives": ["Beautiful", "Ugly", "Clean", "Dirty", "Ancient", "Modern", "Broken", "Intact", "Dangerous", "Safe", "Comfortable", "Convenient", "Suitable", "Mandatory", "Compulsory", "Optional", "Urgent", "Essential", "Optimistic", "Pessimistic", "Realistic", "Temporary", "Permanent", "Vulnerable", "Colored", "Disappointed", "Efficient", "Luxurious", "Poor Quality", "Satisfactory", "Satisfied", "Strongly Recommended", "Confident", "Dull", "Energetic", "Exciting", "Fabulous", "Fantastic", "Flexible", "Immense", "Intensive", "Knowledgeable", "Necessary", "Practical", "Salty", "Social", "Spectacular", "Tranquil", "Various", "Vast", "Voluntary", "Western"],
+    "Colors": ["Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Pink", "Black", "White", "Grey", "Brown", "Spotted", "Striped"],
+    "Verbs": ["Build", "Develop", "Arrange", "Collect", "Discuss", "Suggest", "Support", "Train", "Review", "Revise", "Register", "Donate", "Immigrate", "Concentrate", "Persuade", "Supervise", "Borrow", "Edit", "Exhibit", "Hunt", "Learn", "Mark", "Surpass", "Touch"],
+    "General Concepts": ["Activity", "Attitude", "Carriage", "Circuit", "Commerce", "Creation", "Daily Routine", "Decision", "Demonstration", "Democrats", "Dialect", "Dialogue", "Driving License", "Entrance", "Evolution", "Farewell", "Frequently Updated", "Fund-Raising Event", "Gender", "Government", "Guarantee", "Illiteracy", "Indigenous", "Individual", "Liberal Democracy", "Libertarian", "Life Expectancy", "Literary", "Lunar Calendar", "Magnet", "Man-Made", "Narrative", "Nature Conservation", "Opportunity", "Original Inhabitant", "Passport Photo", "Pedestrian Safety", "Personal Fulfillment", "Practice", "Private Sector", "Prize", "Procedures", "Process", "Proficiency", "Prototype", "Ramification", "Recipient", "Republicans", "Revolution", "Robot", "Sewer Systems", "State", "Straight", "Strike", "Sufficient", "Traffic Jams", "Ultrasound", "Umbrella", "Variety", "Videos", "Waiting List", "Welfare"]
+  }
 };
+
+// Flatten for backward compatibility with existing functions
+const WORD_CATEGORIES:  Record<string, string[]> = {};
+Object.entries(WORD_CATEGORIES_HIERARCHICAL).forEach(([parent, subcats]) => {
+  Object.entries(subcats).forEach(([subcat, words]) => {
+    WORD_CATEGORIES[`${parent} > ${subcat}`] = words;
+  });
+});
 
 interface CategoryStats {
   answered: number;
@@ -58,7 +113,7 @@ const SPEED_OPTIONS = [
   { value: 1.25, label: '1.25x' },
 ];
 
-const IELTSListeningPractice:  React.FC = () => {
+const IELTSListeningPractice: React.FC = () => {
   const [words, setWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -119,7 +174,7 @@ const IELTSListeningPractice:  React.FC = () => {
       setUkVoices(ukOnly);
       const englishVoices = availableVoices.filter(v => v.lang && v.lang. startsWith('en'));
       setAllEnglishVoices(englishVoices);
-      const bestVoice = ukOnly.find(v => v. name.includes('Google') && v.name.includes('UK')) || ukOnly. find(v => v.name. includes('Google')) || ukOnly. find(v => v.name. includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) || ukOnly[0] || englishVoices. find(v => v.name. includes('Google')) || englishVoices.find(v => v.lang. startsWith('en-US')) || englishVoices[0];
+      const bestVoice = ukOnly.find(v => v. name.includes('Google') && v.name.includes('UK')) || ukOnly. find(v => v.name. includes('Google')) || ukOnly.find(v => v.name.includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) || ukOnly[0] || englishVoices. find(v => v.name. includes('Google')) || englishVoices.find(v => v.lang. startsWith('en-US')) || englishVoices[0];
       setSelectedVoice(prev => prev || bestVoice || null);
       const savedVoiceName = localStorage.getItem('selected_uk_voice');
       if (savedVoiceName) {
@@ -136,8 +191,8 @@ const IELTSListeningPractice:  React.FC = () => {
   useEffect(() => { if (selectedVoice) localStorage.setItem('selected_uk_voice', selectedVoice.name); }, [selectedVoice]);
 
   const shuffleArray = (array: string[]) => {
-    const shuffled = [... array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
+    const shuffled = [...array];
+    for (let i = shuffled. length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
@@ -174,7 +229,7 @@ const IELTSListeningPractice:  React.FC = () => {
     try {
       const utterance = new SpeechSynthesisUtterance("Voice changed");
       utterance.voice = voice;
-      utterance.rate = playbackSpeed;
+      utterance. rate = playbackSpeed;
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     } catch (error) { console.warn('Voice test error:', error); }
@@ -210,7 +265,7 @@ const IELTSListeningPractice:  React.FC = () => {
   };
 
   const startTest = (category: string | null = null, mode: 'normal' | 'mistakes' = 'normal') => {
-    let wordList: string[] = [];
+    let wordList:  string[] = [];
     let categoryName = '';
     if (mode === 'mistakes') {
       if (category) {
@@ -242,7 +297,7 @@ const IELTSListeningPractice:  React.FC = () => {
   };
 
   const checkAnswer = () => {
-    if (!userInput.trim()) return;
+    if (! userInput.trim()) return;
     const cleanInput = userInput.trim().toLowerCase();
     const cleanTarget = (words[currentIndex] || '').toLowerCase();
     const correct = cleanInput === cleanTarget;
@@ -251,7 +306,7 @@ const IELTSListeningPractice:  React.FC = () => {
     const newScore = { correct:  score.correct + (correct ? 1 : 0), total: score.total + 1 };
     setScore(newScore);
     if (!correct) {
-      if (! mistakeWords.includes(words[currentIndex])) setMistakeWords(prev => [... prev, words[currentIndex]]);
+      if (! mistakeWords.includes(words[currentIndex])) setMistakeWords(prev => [...prev, words[currentIndex]]);
       speak(`Incorrect. The correct spelling is ${words[currentIndex]}`);
     } else {
       if (mistakeWords.includes(words[currentIndex])) setMistakeWords(prev => prev.filter(w => w !== words[currentIndex]));
@@ -270,15 +325,20 @@ const IELTSListeningPractice:  React.FC = () => {
             if (selectedCategory?. includes('Mistakes')) {
               const existing = categoryStats[originalCategory];
               if (existing) {
-                const updatedCorrect = existing.correct + newScore.correct;
-                const updatedTotal = existing.answered + newScore.total;
-                updateCategoryStats(originalCategory, updatedCorrect, updatedTotal);
+                const newlyFixed = newScore.correct;
+                const updatedCorrect = existing.correct + newlyFixed;
+                const totalWords = existing.answered;
+                updateCategoryStats(originalCategory, updatedCorrect, totalWords);
+              } else {
+                updateCategoryStats(originalCategory, newScore.correct, newScore.total);
               }
-            } else updateCategoryStats(originalCategory, newScore.correct, newScore.total);
+            } else {
+              updateCategoryStats(originalCategory, newScore.correct, newScore. total);
+            }
           }
           setIsPlaying(false);
           setShowResults(true);
-          speak(`Test completed! You got ${newScore.correct} out of ${newScore.total}`);
+          speak(`Test completed!  You got ${newScore.correct} out of ${newScore.total}`);
         }
       }, 1500);
     }
@@ -298,11 +358,16 @@ const IELTSListeningPractice:  React.FC = () => {
         if (selectedCategory?.includes('Mistakes')) {
           const existing = categoryStats[originalCategory];
           if (existing) {
-            const updatedCorrect = existing.correct + score.correct;
-            const updatedTotal = existing.answered + score. total;
-            updateCategoryStats(originalCategory, updatedCorrect, updatedTotal);
+            const newlyFixed = score.correct;
+            const updatedCorrect = existing.correct + newlyFixed;
+            const totalWords = existing.answered;
+            updateCategoryStats(originalCategory, updatedCorrect, totalWords);
+          } else {
+            updateCategoryStats(originalCategory, score. correct, score.total);
           }
-        } else updateCategoryStats(originalCategory, score.correct, score.total);
+        } else {
+          updateCategoryStats(originalCategory, score.correct, score.total);
+        }
       }
       setIsPlaying(false);
       setShowResults(true);
@@ -337,7 +402,7 @@ const IELTSListeningPractice:  React.FC = () => {
           <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-purple-200 py-2 z-50 min-w-[140px]">
             {SPEED_OPTIONS.map(option => (
               <button key={option.value} onClick={() => handleSpeedChange(option.value)} className={`w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors flex items-center justify-between ${playbackSpeed === option.value ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-700'}`}>
-                <span>{option.label}</span>
+                <span>{option. label}</span>
                 {playbackSpeed === option.value && <CheckCircle size={16} className="text-purple-600" />}
               </button>
             ))}
@@ -354,7 +419,7 @@ const IELTSListeningPractice:  React.FC = () => {
           {showVoiceMenu && (
             <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-indigo-200 py-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto">
               <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-gray-200 mb-1">
-                {ukVoices.length > 0 ? `UK Voices (${ukVoices. length})` : `English Voices (${allEnglishVoices.length})`}
+                {ukVoices.length > 0 ? `UK Voices (${ukVoices.length})` : `English Voices (${allEnglishVoices.length})`}
               </div>
               {(ukVoices.length > 0 ?  ukVoices : allEnglishVoices).map(voice => (
                 <button key={voice.name} onClick={() => handleVoiceChange(voice)} className={`w-full text-left px-4 py-2 hover:bg-indigo-50 transition-colors text-sm ${selectedVoice?.name === voice.name ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'}`}>
@@ -438,7 +503,7 @@ const IELTSListeningPractice:  React.FC = () => {
   };
 
   const CategoryModal = () => {
-    if (!showCategoryModal || !pendingCategory) return null;
+    if (! showCategoryModal || !pendingCategory) return null;
     const stats = categoryStats[pendingCategory];
     const mistakeCount = getCategoryMistakeCount(pendingCategory);
     return (
@@ -453,19 +518,19 @@ const IELTSListeningPractice:  React.FC = () => {
           <div className="mb-6">
             <div className="bg-green-50 rounded-lg p-4 mb-4">
               <div className="text-sm text-gray-600 mb-1">Last Score</div>
-              <div className="text-3xl font-bold text-green-600">{stats?.percentage}%</div>
+              <div className="text-3xl font-bold text-green-600">{stats?. percentage}%</div>
               <div className="text-sm text-gray-600 mt-1">{stats?.correct}/{stats?.answered} correct</div>
             </div>
             {mistakeCount > 0 && (
               <div className="bg-red-50 rounded-lg p-4">
-                <div className="text-sm text-red-600 font-medium">You have {mistakeCount} mistake{mistakeCount > 1 ? 's' : ''} to review</div>
+                <div className="text-sm text-red-600 font-medium">You have {mistakeCount} mistake{mistakeCount !== 1 ? 's' :  ''} to review</div>
               </div>
             )}
           </div>
           <div className="space-y-3">
             <button onClick={() => handleModalChoice('mistakes')} className="w-full bg-gradient-to-r from-red-500 to-pink-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2">
               <AlertCircle size={24} />
-              Review {mistakeCount} Mistake{mistakeCount > 1 ? 's' : ''}
+              Review {mistakeCount} Mistake{mistakeCount !== 1 ? 's' : ''}
             </button>
             <button onClick={() => handleModalChoice('full')} className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:shadow-lg transition-all flex items-center justify-center gap-2">
               <Play size={24} />
@@ -491,27 +556,64 @@ const IELTSListeningPractice:  React.FC = () => {
             <span className="opacity-80 text-sm">{mistakeWords.length} words to fix</span>
           </button>
         )}
-        {Object.keys(WORD_CATEGORIES).map((cat) => {
-          const stats = categoryStats[cat];
-          const mistakeCount = getCategoryMistakeCount(cat);
-          const isCompleted = stats?.completed;
-          return (
-            <div key={cat} className="relative">
-              <button onClick={() => handleCategoryClick(cat)} className={`w-full p-6 rounded-xl hover:shadow-md transition-all text-left flex flex-col justify-between h-32 group ${isCompleted ? 'bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300' : 'bg-white border-2 border-purple-100 hover:border-purple-500'}`}>
-                <div className="flex justify-between items-start">
-                  <span className={`text-lg font-semibold ${isCompleted ? 'text-green-700' : 'text-gray-700 group-hover:text-purple-600'}`}>{cat}</span>
-                  {isCompleted && <CheckCircle className="text-green-600" size={24} />}
-                </div>
-                <div className="space-y-1">
-                  <span className="text-gray-400 text-sm">{WORD_CATEGORIES[cat]. length} words</span>
-                  {stats && <div className="text-sm font-semibold text-green-600">{stats.percentage}% • {stats.correct}/{stats.answered}</div>}
-                </div>
-              </button>
-              {mistakeCount > 0 && <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-lg" title={`${mistakeCount} mistakes`}>{mistakeCount}</div>}
-            </div>
-          );
-        })}
       </div>
+      
+      {Object.entries(WORD_CATEGORIES_HIERARCHICAL).map(([parentCat, subcats]) => (
+        <div key={parentCat} className="mb-8">
+          <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2 border-b-2 border-purple-300 pb-2">
+            <BookOpen className="text-purple-600" size={28} />
+            {parentCat}
+          </h3>
+          
+          <div className="grid grid-cols-1 md: grid-cols-2 lg:grid-cols-3 gap-4">
+            {Object.entries(subcats).map(([subcat, words]) => {
+              const fullKey = `${parentCat} > ${subcat}`;
+              const stats = categoryStats[fullKey];
+              const mistakeCount = getCategoryMistakeCount(fullKey);
+              const isCompleted = stats?.completed;
+              
+              return (
+                <div key={fullKey} className="relative">
+                  <button
+                    onClick={() => handleCategoryClick(fullKey)}
+                    className={`w-full p-6 rounded-xl hover:shadow-md transition-all text-left flex flex-col justify-between h-32 group ${
+                      isCompleted 
+                        ? 'bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-300' 
+                        : 'bg-white border-2 border-purple-100 hover:border-purple-500'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start">
+                      <span className={`text-lg font-semibold ${
+                        isCompleted ? 'text-green-700' : 'text-gray-700 group-hover:text-purple-600'
+                      }`}>
+                        {subcat}
+                      </span>
+                      {isCompleted && <CheckCircle className="text-green-600" size={24} />}
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-gray-400 text-sm">{words. length} words</span>
+                      {stats && (
+                        <div className="text-sm font-semibold text-green-600">
+                          {stats.percentage}% • {stats.correct}/{stats.answered}
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                  
+                  {mistakeCount > 0 && (
+                    <div
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-xs font-bold shadow-lg"
+                      title={`${mistakeCount} mistakes`}
+                    >
+                      {mistakeCount}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </>
   );
 
@@ -585,14 +687,14 @@ const IELTSListeningPractice:  React.FC = () => {
                 <FloatingControls />
               </div>
               <div className="p-4 bg-white rounded-lg border border-purple-200">
-                <p className="text-sm text-gray-600 mb-2"><strong>✅ Currently using: </strong></p>
+                <p className="text-sm text-gray-600 mb-2"><strong>✅ Currently using:</strong></p>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Voice: </span>
+                    <span className="text-gray-600">Voice:  </span>
                     <span className="font-medium text-purple-600">{selectedVoice?. name || 'None'}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Speed:</span>
+                    <span className="text-gray-600">Speed: </span>
                     <span className="font-medium text-purple-600">{playbackSpeed}x</span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -603,10 +705,10 @@ const IELTSListeningPractice:  React.FC = () => {
                 {ukVoices.length === 0 && allEnglishVoices.length > 0 && (
                   <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-xs text-blue-800 mb-1">ℹ️ No UK voices available</p>
-                    <p className="text-xs text-gray-600">✅ Using {allEnglishVoices. length} English voice{allEnglishVoices.length > 1 ? 's' : ''} as fallback</p>
+                    <p className="text-xs text-gray-600">✅ Using {allEnglishVoices. length} English voice{allEnglishVoices. length > 1 ? 's' :  ''} as fallback</p>
                   </div>
                 )}
-                {allEnglishVoices. length === 0 && (
+                {allEnglishVoices.length === 0 && (
                   <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                     <p className="text-xs text-yellow-800 mb-2">⚠️ No voices detected</p>
                     <button onClick={forceLoadVoices} className="w-full px-3 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors">🔄 Load Voices</button>
@@ -621,7 +723,7 @@ const IELTSListeningPractice:  React.FC = () => {
             </div>
           )}
           <div className="p-6 md:p-10">
-            {showResults ?  renderResultsScreen() : !isPlaying ?  (
+            {showResults ?  renderResultsScreen() : !isPlaying ? (
               <div className="animate-in fade-in duration-500">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <BookOpen className="text-purple-500"/>Select a Category to Practice
@@ -655,7 +757,7 @@ const IELTSListeningPractice:  React.FC = () => {
                       {isCorrect ? (
                         <div className="flex items-center justify-center gap-2 text-green-600">
                           <CheckCircle size={28} />
-                          <span className="text-2xl font-bold">Correct! </span>
+                          <span className="text-2xl font-bold">Correct!  </span>
                         </div>
                       ) : (
                         <div className="text-red-600">
@@ -670,7 +772,7 @@ const IELTSListeningPractice:  React.FC = () => {
                   )}
                 </div>
                 <div className="flex gap-4">
-                  {!showResult ?  (
+                  {! showResult ?   (
                     <>
                       <button onClick={checkAnswer} disabled={!userInput. trim()} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-700 shadow-lg disabled:bg-gray-300 disabled:shadow-none transition-all transform hover:-translate-y-1">Check Answer</button>
                       <button onClick={togglePause} className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors" aria-label={isPaused ? 'Resume audio' : 'Pause audio'}>{isPaused ? <Play /> : <Pause />}</button>
