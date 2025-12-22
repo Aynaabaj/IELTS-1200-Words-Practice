@@ -791,7 +791,7 @@ const IELTSListeningPractice:  React.FC = () => {
                   </button>
                 </div>
                 <div className="relative mb-6">
-                  <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyDown={handleKeyDown} disabled={showResult || isPaused} className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${showResult ?   isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700' : 'border-gray-300 focus:border-purple-500 text-gray-800'}`} placeholder="Type here..." autoFocus autoComplete="off" autoCorrect="off" spellCheck={false} aria-label="Type your answer" />
+                  <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyDown={handleKeyDown} disabled={showResult || isPaused} className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${showResult ?    isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700' : 'border-gray-300 focus:border-purple-500 text-gray-800'}`} placeholder="Type here..." autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} data-form-type="other" data-lpignore="true" inputMode="text" aria-label="Type your answer" />
                 </div>
                 <div className="h-24 mb-6 text-center">
                   {showResult && (
