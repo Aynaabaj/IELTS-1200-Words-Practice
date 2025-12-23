@@ -1,11 +1,14 @@
+/* App.css - Component-specific styles */
+
+/* Shake animation for wrong answers */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform:  translateX(-5px); }
-  20%, 40%, 60%, 80% { transform: translateX(5px); }
+  10%, 30%, 50%, 70%, 90% { transform:  translateX(-8px); }
+  20%, 40%, 60%, 80% { transform: translateX(8px); }
 }
 
 .shake {
-  animation: shake 0.5s;
+  animation: shake 0.5s ease-in-out;
 }
 
 /* Smooth fade-in animation for category grid */
@@ -20,17 +23,33 @@
   }
 }
 
-. animate-in {
-  animation:  fadeIn 0.5s ease-out;
+.fade-in {
+  animation:  fadeIn 0.4s ease-in;
 }
 
-/* Pulse animation for audio icon */
+/* Smooth entrance animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+. animate-in {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Pulse animation for audio button */
 @keyframes pulse {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity:  0.5;
+    opacity: 0.7;
   }
 }
 
@@ -38,21 +57,11 @@
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Optional: Add smooth transitions */
-* {
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Prevent transition on transform for better performance */
-*:not(.shake):not(.animate-in) {
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-}
-
 /* Focus visible styles for accessibility */
-button:focus-visible,
+button: focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid #9333ea;
+  outline: 3px solid #a78bfa;
   outline-offset: 2px;
 }
 
@@ -61,4 +70,10 @@ button:focus,
 input:focus,
 select:focus {
   outline: none;
+}
+
+/* Input focus effect */
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
 }
