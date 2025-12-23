@@ -1,4 +1,4 @@
-/* Modern IELTS Spelling Master Styles */
+/* index.css - Global styles and animations */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -9,7 +9,7 @@
 
   color-scheme: light;
   color: #1a202c;
-  background:  linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -19,7 +19,7 @@
 
 * {
   margin: 0;
-  padding: 0;
+  padding:  0;
   box-sizing: border-box;
 }
 
@@ -31,55 +31,14 @@ body {
   background-attachment: fixed;
 }
 
-/* Smooth entrance animation */
-.animate-in {
-  animation: fadeInUp 0.6s ease-out;
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Fade in animation */
-.fade-in {
-  animation: fadeIn 0.4s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Shake animation for wrong answers */
-.shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform:  translateX(-8px); }
-  20%, 40%, 60%, 80% { transform: translateX(8px); }
-}
-
-/* Pulse animation for audio button */
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity:  0.7;
-  }
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Floating animation for cards */
@@ -88,11 +47,11 @@ body {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform:  translateY(-10px);
   }
 }
 
-. float-on-hover: hover {
+.float-on-hover: hover {
   animation: float 2s ease-in-out infinite;
 }
 
@@ -102,7 +61,7 @@ body {
     background-position: 0% 50%;
   }
   50% {
-    background-position:  100% 50%;
+    background-position: 100% 50%;
   }
   100% {
     background-position: 0% 50%;
@@ -114,7 +73,7 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
+  animation:  gradient-shift 3s ease infinite;
 }
 
 /* Card hover effects */
@@ -129,14 +88,14 @@ body {
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
+  width:  100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
 }
 
 .card-hover:hover::before {
-  left:  100%;
+  left: 100%;
 }
 
 . card-hover:hover {
@@ -145,25 +104,25 @@ body {
 }
 
 /* Button glow effect */
-.btn-glow {
-  position:  relative;
+. btn-glow {
+  position: relative;
   overflow: hidden;
 }
 
 .btn-glow::after {
-  content: '';
+  content:  '';
   position: absolute;
-  top:  50%;
+  top: 50%;
   left: 50%;
   width: 0;
-  height: 0;
+  height:  0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
+  background:  rgba(255, 255, 255, 0.5);
   transform: translate(-50%, -50%);
   transition: width 0.6s, height 0.6s;
 }
 
-.btn-glow:hover::after {
+.btn-glow:hover:: after {
   width: 300px;
   height: 300px;
 }
@@ -175,13 +134,13 @@ body {
   overflow: hidden;
 }
 
-.progress-bar::after {
+. progress-bar::after {
   content: '';
   position: absolute;
-  top:  0;
+  top: 0;
   left: 0;
   bottom: 0;
-  width:  100%;
+  width: 100%;
   background: linear-gradient(
     90deg,
     transparent,
@@ -193,28 +152,22 @@ body {
 
 @keyframes shimmer {
   0% {
-    transform:  translateX(-100%);
+    transform: translateX(-100%);
   }
   100% {
     transform: translateX(100%);
   }
 }
 
-/* Input focus effect */
-input:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
-}
-
 /* Backdrop blur for modals */
 .backdrop-blur-sm {
-  backdrop-filter:  blur(8px);
+  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 /* Category badge animation */
-.badge-pulse {
-  animation: badge-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+. badge-pulse {
+  animation:  badge-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes badge-pulse {
@@ -243,25 +196,15 @@ input:focus {
 /* Gradient border animation */
 @keyframes border-gradient {
   0%, 100% {
-    border-color: rgba(167, 139, 250, 1);
+    border-color:  rgba(167, 139, 250, 1);
   }
   50% {
     border-color: rgba(236, 72, 153, 1);
   }
 }
 
-. border-animate {
+.border-animate {
   animation: border-gradient 3s ease-in-out infinite;
-}
-
-/* Tooltip styles */
-[title] {
-  position: relative;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
 }
 
 /* Custom scrollbar */
@@ -293,10 +236,10 @@ html {
 /* Success celebration animation */
 @keyframes celebrate {
   0%, 100% {
-    transform:  scale(1) rotate(0deg);
+    transform: scale(1) rotate(0deg);
   }
   25% {
-    transform: scale(1.1) rotate(-5deg);
+    transform:  scale(1.1) rotate(-5deg);
   }
   75% {
     transform: scale(1.1) rotate(5deg);
@@ -310,7 +253,7 @@ html {
 /* Loading spinner */
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform:  rotate(360deg);
   }
 }
 
@@ -344,6 +287,35 @@ html {
 
 .star-glow {
   animation: star-glow 2s ease-in-out infinite;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Neon glow effect */
+. neon-glow {
+  box-shadow: 0 0 5px rgba(167, 139, 250, 0.5),
+              0 0 10px rgba(167, 139, 250, 0.4),
+              0 0 20px rgba(167, 139, 250, 0.3);
+}
+
+/* Success checkmark animation */
+@keyframes checkmark {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset:  0;
+  }
+}
+
+.checkmark-animate {
+  animation: checkmark 0.5s ease-in-out;
 }
 
 /* Responsive font sizing */
@@ -382,7 +354,7 @@ input:focus-visible {
 }
 
 /* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:  reduce) {
   *,
   *::before,
   *::after {
@@ -401,33 +373,4 @@ input:focus-visible {
   .no-print {
     display: none;
   }
-}
-
-/* Glass morphism effect */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Neon glow effect */
-.neon-glow {
-  box-shadow: 0 0 5px rgba(167, 139, 250, 0.5),
-              0 0 10px rgba(167, 139, 250, 0.4),
-              0 0 20px rgba(167, 139, 250, 0.3);
-}
-
-/* Success checkmark animation */
-@keyframes checkmark {
-  0% {
-    stroke-dashoffset: 100;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-.checkmark-animate {
-  animation: checkmark 0.5s ease-in-out;
 }
