@@ -16,7 +16,7 @@ const WORD_CATEGORIES_HIERARCHICAL:  Record<string, Record<string, string[]>> = 
     "University Life": ["Bachelor's Degree", "Diploma", "Certificate", "Dissertation", "Thesis", "Semester", "Module", "Course Outline", "Assessment", "Assignment", "Deadline", "Extension", "Graduation", "Commencement", "Alumni", "School Reunion", "Student Retention", "Placement Test", "Outcomes"],
     "Study Terms": ["Advanced", "Attendance", "Classroom", "Compound", "Computer Laboratory", "Department", "Experiment", "Extra Background", "Feedback", "Give a Talk", "Group Discussion", "Guidelines", "Higher Education", "Intermediate", "Introductory", "Knowledge", "Media Room", "Post-Secondary", "Primary", "Printer", "Proofreading", "Report Writing", "Research", "Schedule", "Secondary", "Specialist", "Speech", "Stationery", "Student Advisor", "Student Support Services", "Tasks", "Topic", "Vocabulary", "Written Work"],
     "People & Roles": ["Tutor", "Supervisor", "Advisor", "Lecturer", "Professor", "Registrar", "Faculty", "Staff", "Pupil", "Student", "Overseas Student", "Foreign Student", "International Student", "Freshman", "Senior", "Junior"],
-    "Facilities": ["Campus", "Library", "Laboratory", "Lecture Hall", "Main Hall", "Computer Centre", "Dining Room", "Canteen", "Cafeteria", "Accommodation", "Homestay", "Dormitory", "Resources Room"],
+    "Facilities":  ["Campus", "Library", "Laboratory", "Lecture Hall", "Main Hall", "Computer Centre", "Dining Room", "Canteen", "Cafeteria", "Accommodation", "Homestay", "Dormitory", "Resources Room"],
     "Study Materials": ["Textbook", "Dictionary", "Handout", "Leaflet", "Questionnaire", "Survey", "Data", "Statistics", "Reference", "Bibliography", "Publication", "Encyclopedia", "Note-taking", "Pencil", "Laptop"],
     "Subjects": ["Archaeology", "Architecture", "Biology", "Business Management", "Chemistry", "Economics", "Geography", "History", "Humanities", "Law", "Literature", "Logic", "Mathematics", "Performing Arts", "Philosophy", "Physics", "Politics", "Psychology", "Science", "Visual Arts", "Anthropology", "Agriculture"]
   },
@@ -37,7 +37,7 @@ const WORD_CATEGORIES_HIERARCHICAL:  Record<string, Record<string, string[]>> = 
   
   "Health, Fitness & Body": {
     "Medical":  ["Hospital", "Clinic", "Dentistry", "Medicine", "Treatment", "Remedy", "Cure", "Disease", "Illness", "Symptom", "Infection", "Virus", "Bacteria", "Surgery", "Pharmacy", "Nursing Care", "Stress", "Nursery"],
-    "Fitness": ["Exercise", "Yoga", "Tai-Chi", "Jogging", "Running", "Gym", "Workout", "Stamina", "Strength", "Keep-Fit", "Outdoor Activities", "Leisure Time", "Regular Exercise"],
+    "Fitness":  ["Exercise", "Yoga", "Tai-Chi", "Jogging", "Running", "Gym", "Workout", "Stamina", "Strength", "Keep-Fit", "Outdoor Activities", "Leisure Time", "Regular Exercise"],
     "Body":  ["Heart", "Lung", "Liver", "Muscle", "Bone", "Blood", "Skin", "Brain", "Vision"]
   },
   
@@ -52,7 +52,7 @@ const WORD_CATEGORIES_HIERARCHICAL:  Record<string, Record<string, string[]>> = 
   
   "Travel, Transportation & Places": {
     "Land Transport": ["Car", "Automobile", "Taxi", "Cab", "Bus", "School Bus", "Double-Decker Bus", "Minibus", "Single-Decker", "Coach", "Truck", "Lorry", "Tow Truck", "Forklift", "Breakdown Truck", "Van", "Tram", "Train", "Freight Train", "Goods Train", "Steam Train", "Subway", "Underground", "Tractor", "Jeep", "Camper", "Hire A Car", "Pickup", "Tanker", "Transporter"],
-    "Water Transport": ["Ship", "Boat", "Ferry", "Hovercraft", "Hydrofoil", "Liner", "Canoe", "Kayak", "Dinghy", "Canal Boat", "Rowboat", "Paddle Steamer", "Cabin Cruiser", "Container Ship", "Gondola", "Lifeboat", "Narrowboat", "Punt", "Sailboat", "Shipment"],
+    "Water Transport":  ["Ship", "Boat", "Ferry", "Hovercraft", "Hydrofoil", "Liner", "Canoe", "Kayak", "Dinghy", "Canal Boat", "Rowboat", "Paddle Steamer", "Cabin Cruiser", "Container Ship", "Gondola", "Lifeboat", "Narrowboat", "Punt", "Sailboat", "Shipment"],
     "Air Transport": ["Airplane", "Aircraft", "Helicopter", "Hot-Air Balloon", "Airship", "Seaplane", "Cargo Plane"],
     "Travel Terms": ["Passenger", "Crew", "Pilot", "Driver", "Ticket", "Reservation", "Visa", "Luggage", "Terminal", "Platform", "Harbour", "Airport", "Station", "View", "Souvenir", "Tourist Attraction", "Guided Tour", "Expedition", "Aquarium", "Culture", "Guest", "Memorable", "Picnic", "Single Room", "Double-Bedded Room", "Ticket Office", "Trip"],
     "Geography & Places": ["Continent", "Country", "City", "Capital", "Village", "Suburb", "Region", "Map", "Avenue", "Bridge", "Car Park", "Central Station", "City Centre", "Department Store", "Embassy", "Garden", "Lane", "Road System", "Street", "Temple", "Bookshop", "Cafe", "City Council", "Conversation Club", "Dance Studio", "Kindergarten", "Local Library", "Park", "Parliament", "Restaurant", "Sports Centre", "Swimming Pool"],
@@ -113,7 +113,7 @@ const SPEED_OPTIONS = [
   { value: 1.25, label: '1.25x' },
 ];
 
-const IELTSListeningPractice:  React.FC = () => {
+const IELTSListeningPractice: React.FC = () => {
   const [words, setWords] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -168,13 +168,13 @@ const IELTSListeningPractice:  React.FC = () => {
     let voicesLoaded = false;
     const loadVoices = () => {
       const availableVoices = window.speechSynthesis.getVoices();
-      if (availableVoices.length === 0 && ! voicesLoaded) return;
+      if (availableVoices.length === 0 && !voicesLoaded) return;
       voicesLoaded = true;
       const ukOnly = availableVoices.filter(v => v.lang === 'en-GB');
       setUkVoices(ukOnly);
-      const englishVoices = availableVoices.filter(v => v.lang && v.lang. startsWith('en'));
+      const englishVoices = availableVoices.filter(v => v.lang && v.lang.startsWith('en'));
       setAllEnglishVoices(englishVoices);
-      const bestVoice = ukOnly.find(v => v.name.includes('Google') && v.name.includes('UK')) || ukOnly. find(v => v.name. includes('Google')) || ukOnly. find(v => v.name. includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) || ukOnly[0] || englishVoices. find(v => v.name. includes('Google')) || englishVoices.find(v => v.lang. startsWith('en-US')) || englishVoices[0];
+      const bestVoice = ukOnly.find(v => v.name.includes('Google') && v.name.includes('UK')) || ukOnly. find(v => v.name. includes('Google')) || ukOnly.find(v => v. name.includes('Microsoft') || v.name.includes('Hazel') || v.name.includes('Daniel')) || ukOnly[0] || englishVoices. find(v => v.name. includes('Google')) || englishVoices.find(v => v.lang. startsWith('en-US')) || englishVoices[0];
       setSelectedVoice(prev => prev || bestVoice || null);
       const savedVoiceName = localStorage.getItem('selected_uk_voice');
       if (savedVoiceName) {
@@ -191,7 +191,7 @@ const IELTSListeningPractice:  React.FC = () => {
   useEffect(() => { if (selectedVoice) localStorage.setItem('selected_uk_voice', selectedVoice.name); }, [selectedVoice]);
 
   const shuffleArray = (array: string[]) => {
-    const shuffled = [... array];
+    const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -206,8 +206,8 @@ const IELTSListeningPractice:  React.FC = () => {
         const utterance = new SpeechSynthesisUtterance(text);
         if (selectedVoice) utterance.voice = selectedVoice;
         utterance.rate = playbackSpeed;
-        utterance.pitch = 1;
-        utterance. volume = 1;
+        utterance. pitch = 1;
+        utterance.volume = 1;
         window.speechSynthesis.speak(utterance);
       } catch (error) { console.warn('Speech synthesis error:', error); }
     }
@@ -333,7 +333,7 @@ const IELTSListeningPractice:  React.FC = () => {
                 updateCategoryStats(originalCategory, newScore.correct, newScore.total);
               }
             } else {
-              updateCategoryStats(originalCategory, newScore.correct, newScore. total);
+              updateCategoryStats(originalCategory, newScore.correct, newScore.total);
             }
           }
           setIsPlaying(false);
@@ -375,12 +375,46 @@ const IELTSListeningPractice:  React.FC = () => {
     }
   };
 
-  const clearMistakes = () => { if (window.confirm('Are you sure you want to clear your saved mistake words?')) setMistakeWords([]); };
+  const clearMistakes = () => { 
+    if (window.confirm('Are you sure you want to clear your saved mistake words?')) {
+      setMistakeWords([]);
+    }
+  };
+
+  const resetAllProgress = () => {
+    const confirmReset = window.confirm(
+      '⚠️ RESET ALL PROGRESS?\n\n' +
+      'This will permanently delete:\n' +
+      '✗ All test history\n' +
+      '✗ All category progress (green checkmarks)\n' +
+      '✗ All mistake words\n' +
+      '✗ Overall score and statistics\n\n' +
+      'This action CANNOT be undone!\n\n' +
+      'Are you absolutely sure? '
+    );
+    
+    if (confirmReset) {
+      const doubleCheck = window.confirm(
+        '🚨 FINAL WARNING!\n\n' +
+        'All your progress will be lost forever.\n\n' +
+        'Click OK to reset everything.'
+      );
+      
+      if (doubleCheck) {
+        localStorage.removeItem('ielts_mistakes');
+        localStorage.removeItem('ielts_category_stats');
+        setMistakeWords([]);
+        setCategoryStats({});
+        alert('✅ All progress has been reset!\n\nYou can start fresh now.');
+        window.location.reload();
+      }
+    }
+  };
   
   const goHome = () => { 
     if (isPlaying && score.total > 0 && ! showResults) {
       const shouldExit = window.confirm(
-        `You've answered ${score.total} word${score.total > 1 ? 's' : ''}.\n\n` +
+        `You've answered ${score.total} word${score.total > 1 ? 's' :  ''}.\n\n` +
         `✅ Progress will be saved (${score.correct} correct)\n` +
         `⚠️ Remaining words will be added to mistakes\n\n` +
         `Exit now? `
@@ -405,7 +439,7 @@ const IELTSListeningPractice:  React.FC = () => {
         }
         
         const remainingWords = words.slice(currentIndex + (showResult ? 1 : 0));
-        const newMistakes = remainingWords.filter(word => !mistakeWords. includes(word));
+        const newMistakes = remainingWords.filter(word => !mistakeWords.includes(word));
         if (newMistakes.length > 0) {
           setMistakeWords(prev => [...prev, ...newMistakes]);
         }
@@ -418,7 +452,7 @@ const IELTSListeningPractice:  React.FC = () => {
   };
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isPlaying && ! isPaused) {
+    if (e. key === 'Enter' && isPlaying && ! isPaused) {
       if (showResult) {
         nextWord();
       } else {
@@ -431,11 +465,10 @@ const IELTSListeningPractice:  React.FC = () => {
     const categoryWords = WORD_CATEGORIES[category] || [];
     return mistakeWords.filter(word => categoryWords.includes(word)).length;
   };
-
-  const FloatingControls = () => (
+    const FloatingControls = () => (
     <div className="flex items-center gap-2">
       <div className="relative" ref={speedMenuRef}>
-        <button onClick={() => { setShowSpeedMenu(! showSpeedMenu); setShowVoiceMenu(false); }} className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-md" title="Playback Speed">
+        <button onClick={() => { setShowSpeedMenu(!  showSpeedMenu); setShowVoiceMenu(false); }} className="flex items-center gap-2 px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-md" title="Playback Speed">
           <Gauge size={18} />
           <span className="text-sm font-medium">{playbackSpeed}x</span>
           <ChevronDown size={16} />
@@ -443,7 +476,7 @@ const IELTSListeningPractice:  React.FC = () => {
         {showSpeedMenu && (
           <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-purple-200 py-2 z-50 min-w-[140px]">
             {SPEED_OPTIONS.map(option => (
-              <button key={option.value} onClick={() => handleSpeedChange(option.value)} className={`w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors flex items-center justify-between ${playbackSpeed === option.value ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-700'}`}>
+              <button key={option. value} onClick={() => handleSpeedChange(option.value)} className={`w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors flex items-center justify-between ${playbackSpeed === option.value ? 'bg-purple-100 text-purple-700 font-semibold' : 'text-gray-700'}`}>
                 <span>{option.label}</span>
                 {playbackSpeed === option.value && <CheckCircle size={16} className="text-purple-600" />}
               </button>
@@ -453,7 +486,7 @@ const IELTSListeningPractice:  React.FC = () => {
       </div>
       {allEnglishVoices.length > 0 && (
         <div className="relative" ref={voiceMenuRef}>
-          <button onClick={() => { setShowVoiceMenu(!showVoiceMenu); setShowSpeedMenu(false); }} className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md" title="Change Voice">
+          <button onClick={() => { setShowVoiceMenu(! showVoiceMenu); setShowSpeedMenu(false); }} className="flex items-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md" title="Change Voice">
             <Volume2 size={18} />
             <span className="text-sm font-medium hidden sm:inline">Voice</span>
             <ChevronDown size={16} />
@@ -461,9 +494,9 @@ const IELTSListeningPractice:  React.FC = () => {
           {showVoiceMenu && (
             <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border-2 border-indigo-200 py-2 z-50 min-w-[200px] max-h-[300px] overflow-y-auto">
               <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase border-b border-gray-200 mb-1">
-                {ukVoices.length > 0 ? `UK Voices (${ukVoices. length})` : `English Voices (${allEnglishVoices.length})`}
+                {ukVoices.length > 0 ? `UK Voices (${ukVoices.length})` : `English Voices (${allEnglishVoices.length})`}
               </div>
-              {(ukVoices.length > 0 ?  ukVoices : allEnglishVoices).map(voice => (
+              {(ukVoices.length > 0 ?   ukVoices : allEnglishVoices).map(voice => (
                 <button key={voice.name} onClick={() => handleVoiceChange(voice)} className={`w-full text-left px-4 py-2 hover:bg-indigo-50 transition-colors text-sm ${selectedVoice?. name === voice.name ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'}`}>
                   <div className="flex items-center justify-between">
                     <span className="truncate">{voice.name. split(' ')[0]}</span>
@@ -545,7 +578,7 @@ const IELTSListeningPractice:  React.FC = () => {
   };
 
   const CategoryModal = () => {
-    if (!showCategoryModal || !pendingCategory) return null;
+    if (! showCategoryModal || !pendingCategory) return null;
     const stats = categoryStats[pendingCategory];
     const mistakeCount = getCategoryMistakeCount(pendingCategory);
     return (
@@ -565,7 +598,7 @@ const IELTSListeningPractice:  React.FC = () => {
             </div>
             {mistakeCount > 0 && (
               <div className="bg-red-50 rounded-lg p-4">
-                <div className="text-sm text-red-600 font-medium">You have {mistakeCount} mistake{mistakeCount !== 1 ? 's' :  ''} to review</div>
+                <div className="text-sm text-red-600 font-medium">You have {mistakeCount} mistake{mistakeCount !== 1 ? 's' :   ''} to review</div>
               </div>
             )}
           </div>
@@ -633,7 +666,7 @@ const IELTSListeningPractice:  React.FC = () => {
                       {isCompleted && <CheckCircle className="text-green-600" size={24} />}
                     </div>
                     <div className="space-y-1">
-                      <span className="text-gray-400 text-sm">{words.length} words</span>
+                      <span className="text-gray-400 text-sm">{words. length} words</span>
                       {stats && (
                         <div className="text-sm font-semibold text-green-600">
                           {stats.percentage}% • {stats.correct}/{stats.answered}
@@ -660,7 +693,7 @@ const IELTSListeningPractice:  React.FC = () => {
   );
 
   const renderResultsScreen = () => {
-    const finalCorrect = score.correct;
+    const finalCorrect = score. correct;
     const finalTotal = score.total;
     const finalMistakes = finalTotal - finalCorrect;
     const percentage = finalTotal > 0 ? Math.round((finalCorrect / finalTotal) * 100) : 0;
@@ -670,7 +703,7 @@ const IELTSListeningPractice:  React.FC = () => {
           <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full mb-4">
             <Trophy className="text-white" size={48} />
           </div>
-          <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Completed!</h2>
+          <h2 className="text-4xl font-bold text-gray-800 mb-2">Test Completed! </h2>
           <p className="text-gray-500">{selectedCategory}</p>
         </div>
         <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
@@ -719,7 +752,7 @@ const IELTSListeningPractice:  React.FC = () => {
           <p className="text-gray-500">Sharpen your listening skills for the exam</p>
         </header>
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {! isPlaying && ! showResults && (
+          {!  isPlaying && !  showResults && (
             <div className="bg-purple-50 p-4 border-b border-purple-100">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2 text-purple-800 font-medium">
@@ -729,43 +762,60 @@ const IELTSListeningPractice:  React.FC = () => {
                 <FloatingControls />
               </div>
               <div className="p-4 bg-white rounded-lg border border-purple-200">
-                <p className="text-sm text-gray-600 mb-2"><strong>✅ Currently using: </strong></p>
+                <p className="text-sm text-gray-600 mb-2"><strong>✅ Currently using:  </strong></p>
                 <div className="space-y-1 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Voice: </span>
+                    <span className="text-gray-600">Voice:  </span>
                     <span className="font-medium text-purple-600">{selectedVoice?. name || 'None'}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">Speed:</span>
+                    <span className="text-gray-600">Speed: </span>
                     <span className="font-medium text-purple-600">{playbackSpeed}x</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-600">{ukVoices.length > 0 ? 'UK Voices: ' : 'English Voices:'}</span>
+                    <span className="text-gray-600">{ukVoices.length > 0 ? 'UK Voices:  ' : 'English Voices:'}</span>
                     <span className="font-medium text-green-600">{ukVoices.length > 0 ? ukVoices.length : allEnglishVoices.length}</span>
                   </div>
                 </div>
                 {ukVoices.length === 0 && allEnglishVoices.length > 0 && (
                   <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-xs text-blue-800 mb-1">ℹ️ No UK voices available</p>
-                    <p className="text-xs text-gray-600">✅ Using {allEnglishVoices. length} English voice{allEnglishVoices.length > 1 ? 's' :  ''} as fallback</p>
+                    <p className="text-xs text-gray-600">✅ Using {allEnglishVoices. length} English voice{allEnglishVoices.length > 1 ? 's' :   ''} as fallback</p>
                   </div>
                 )}
-                {allEnglishVoices. length === 0 && (
+                {allEnglishVoices.length === 0 && (
                   <div className="mt-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
                     <p className="text-xs text-yellow-800 mb-2">⚠️ No voices detected</p>
                     <button onClick={forceLoadVoices} className="w-full px-3 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 transition-colors">🔄 Load Voices</button>
                   </div>
                 )}
               </div>
-              {mistakeWords.length > 0 && (
-                <div className="mt-4 text-center">
-                  <button onClick={clearMistakes} className="text-xs text-red-500 hover:text-red-700 underline">Clear Mistake History</button>
+              <div className="mt-4 space-y-2">
+                {mistakeWords.length > 0 && (
+                  <div className="text-center">
+                    <button onClick={clearMistakes} className="text-xs text-red-500 hover:text-red-700 underline">
+                      Clear Mistake History
+                    </button>
+                  </div>
+                )}
+                
+                <div className="text-center">
+                  <button 
+                    onClick={resetAllProgress} 
+                    className="px-4 py-2 bg-red-600 text-white text-xs font-semibold rounded-lg hover:bg-red-700 transition-all shadow-md hover:shadow-lg"
+                  >
+                    🗑️ Reset All Progress
+                  </button>
                 </div>
-              )}
+                
+                <p className="text-xs text-gray-500 text-center italic">
+                  ⚠️ Reset will delete all history & stats permanently
+                </p>
+              </div>
             </div>
           )}
           <div className="p-6 md:p-10">
-            {showResults ? renderResultsScreen() : ! isPlaying ? (
+            {showResults ?  renderResultsScreen() : ! isPlaying ?  (
               <div className="animate-in fade-in duration-500">
                 <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <BookOpen className="text-purple-500"/>Select a Category to Practice
@@ -778,20 +828,38 @@ const IELTSListeningPractice:  React.FC = () => {
                   <div className="bg-purple-600 h-2.5 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
                 </div>
                 <div className="flex justify-between items-center mb-8 text-sm">
-                  <span className="text-gray-600">Category:  <strong className="text-purple-600">{selectedCategory}</strong></span>
+                  <span className="text-gray-600">Category: <strong className="text-purple-600">{selectedCategory}</strong></span>
                   <div className="flex items-center gap-3">
                     <FloatingControls />
                     <span className="text-gray-600">Progress: <strong className="text-purple-600">{currentIndex + 1}/{words.length}</strong></span>
                   </div>
                 </div>
                 <div className="text-center mb-8">
-                                    <button onClick={() => { window.speechSynthesis.cancel(); speak(words[currentIndex]); setIsPaused(false); }} className="group relative inline-flex items-center justify-center p-4 px-8 py-4 overflow-hidden font-medium text-purple-600 transition duration-300 ease-out border-2 border-purple-500 rounded-full shadow-md group hover:bg-purple-50" aria-label="Replay audio">
+                  <button onClick={() => { window.speechSynthesis.cancel(); speak(words[currentIndex]); setIsPaused(false); }} className="group relative inline-flex items-center justify-center p-4 px-8 py-4 overflow-hidden font-medium text-purple-600 transition duration-300 ease-out border-2 border-purple-500 rounded-full shadow-md group hover:bg-purple-50" aria-label="Replay audio">
                     <Volume2 size={32} className={`mr-2 ${isPaused ? 'opacity-50' : 'animate-pulse'}`} />
                     <span className="text-lg">Replay Audio</span>
                   </button>
                 </div>
                 <div className="relative mb-6">
-                  <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyDown={handleKeyDown} disabled={showResult || isPaused} className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${showResult ?    isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700' : 'border-gray-300 focus:border-purple-500 text-gray-800'}`} placeholder="Type here..." autoFocus autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} data-form-type="other" data-lpignore="true" inputMode="text" aria-label="Type your answer" />
+                  <input 
+                    ref={inputRef} 
+                    type="text" 
+                    value={userInput} 
+                    onChange={(e) => setUserInput(e.target.value)} 
+                    onKeyDown={handleKeyDown} 
+                    disabled={showResult || isPaused} 
+                    className={`w-full text-center text-3xl font-bold py-4 border-b-4 focus:outline-none bg-transparent transition-colors ${showResult ?   isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700' : 'border-gray-300 focus:border-purple-500 text-gray-800'}`} 
+                    placeholder="Type here..." 
+                    autoFocus 
+                    autoComplete="off" 
+                    autoCorrect="off" 
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    data-form-type="other"
+                    data-lpignore="true"
+                    inputMode="text"
+                    aria-label="Type your answer" 
+                  />
                 </div>
                 <div className="h-24 mb-6 text-center">
                   {showResult && (
@@ -799,7 +867,7 @@ const IELTSListeningPractice:  React.FC = () => {
                       {isCorrect ? (
                         <div className="flex items-center justify-center gap-2 text-green-600">
                           <CheckCircle size={28} />
-                          <span className="text-2xl font-bold">Correct!  </span>
+                          <span className="text-2xl font-bold">Correct!   </span>
                         </div>
                       ) : (
                         <div className="text-red-600">
@@ -814,13 +882,13 @@ const IELTSListeningPractice:  React.FC = () => {
                   )}
                 </div>
                 <div className="flex gap-4">
-                  {!  showResult ?   (
+                  {!   showResult ?    (
                     <>
                       <button onClick={checkAnswer} disabled={!  userInput.  trim()} className="flex-1 bg-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-purple-700 shadow-lg disabled:bg-gray-300 disabled:shadow-none transition-all transform hover:-translate-y-1">Check Answer</button>
-                      <button onClick={togglePause} className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors" aria-label={isPaused ?  'Resume audio' : 'Pause audio'}>{isPaused ? <Play /> : <Pause />}</button>
+                      <button onClick={togglePause} className="px-6 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-colors" aria-label={isPaused ?   'Resume audio' : 'Pause audio'}>{isPaused ? <Play /> : <Pause />}</button>
                     </>
                   ) : (
-                    <>{ ! isCorrect && (
+                    <>{!  isCorrect && (
                       <button onClick={nextWord} autoFocus className="flex-1 bg-indigo-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg transition-all transform hover:-translate-y-1 flex justify-center items-center gap-2">Next Word <SkipForward size={20} /></button>
                     )}</>
                   )}
