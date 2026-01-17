@@ -167,7 +167,9 @@ npm run build
 ![GitHub last commit](https://img.shields.io/github/last-commit/Aynaabaj/IELTS-1200-Words-Practice)
 ![GitHub issues](https://img.shields.io/github/issues/Aynaabaj/IELTS-1200-Words-Practice)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/Aynaabaj/IELTS-1200-Words-Practice)
-![Netlify Status](https://api.netlify.com/api/v1/badges/YOUR-SITE-ID/deploy-status)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/331ee5a5-cff1-4328-bebf-3435979fa480/deploy-status)](https://app.netlify.com/projects/ielts1200words/deploys)
+
+
 
 ---
 
