@@ -1,8 +1,8 @@
 # IELTS 1200 Words Practice 📚
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-19. 2-61DAFB?logo=react&logoColor=black)
-![Vite](https://img.shields.io/badge/Vite-7. 2-646CFF?logo=vite&logoColor=white)
+![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Stars](https://img.shields.io/github/stars/Aynaabaj/IELTS-1200-Words-Practice?style=social)
 
