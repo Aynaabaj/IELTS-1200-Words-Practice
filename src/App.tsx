@@ -37,7 +37,7 @@ const WORD_CATEGORIES_HIERARCHICAL:  Record<string, Record<string, string[]>> = 
   
   "Health, Fitness & Body": {
     "Medical":  ["Hospital", "Clinic", "Dentistry", "Medicine", "Treatment", "Remedy", "Cure", "Disease", "Illness", "Symptom", "Infection", "Virus", "Bacteria", "Surgery", "Pharmacy", "Nursing Care", "Stress"],
-    "Fitness":  ["Exercise", "Yoga", "Tai-Chi", "Jogging", "Running", "Gym", "Workout", "Stamina", "Strength", "Activities"]
+    "Fitness":  ["Exercise", "Yoga", "Tai-Chi", "Jogging", "Running", "Gym", "Workout", "Stamina", "Strength", "Activities"],
     "Body":  ["Heart", "Lung", "Liver", "Muscle", "Bone", "Blood", "Skin", "Brain", "Vision"]
   },
   
